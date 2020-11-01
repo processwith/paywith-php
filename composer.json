@@ -1,0 +1,50 @@
+{
+    "name": "processwith/paywith-php",
+    "description": "Easily switch from paystack to flutterwave(vice versa) in your PHP applications.",
+    "keywords": [
+        "processwith",
+        "paywith",
+        "php",
+        "paystack",
+        "flutterwave",
+        "rave",
+        "paylink",
+        "monnify"
+    ],
+    "homepage": "https://github.com/processwith/paywith",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Jeremiah Ikwuje",
+            "email": "jeremiahikwuje@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "php-curl-class/php-curl-class": "^8.8",
+        "yabacon/paystack-php": "^2.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ProcessWith\\Paywith\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Processwith\\Tests\\Paywith": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
