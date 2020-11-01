@@ -1,9 +1,9 @@
 # Very short description of the package
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/abegpay/abegpay-php.svg?style=flat-square)](https://packagist.org/packages/abegpay/abegpay-php)
-[![Build Status](https://img.shields.io/travis/abegpay/abegpay-php/master.svg?style=flat-square)](https://travis-ci.org/abegpay/abegpay-php)
-[![Quality Score](https://img.shields.io/scrutinizer/g/abegpay/abegpay-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/abegpay/abegpay-php)
-[![Total Downloads](https://img.shields.io/packagist/dt/abegpay/abegpay-php.svg?style=flat-square)](https://packagist.org/packages/abegpay/abegpay-php)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/processwith/paywith-php.svg?style=flat-square)](https://packagist.org/packages/processwith/paywith-php)
+[![Build Status](https://img.shields.io/travis/processwith/paywith-php/master.svg?style=flat-square)](https://travis-ci.org/processwith/paywith-php)
+[![Quality Score](https://img.shields.io/scrutinizer/g/processwith/paywith-php.svg?style=flat-square)](https://scrutinizer-ci.com/g/processwith/paywith-php)
+[![Total Downloads](https://img.shields.io/packagist/dt/processwith/paywith-php.svg?style=flat-square)](https://packagist.org/packages/processwith/paywith-php)
 
 This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what PSRs you support to avoid any confusion with users and contributors.
 
@@ -12,7 +12,7 @@ This is where your description should go. Try and limit it to a paragraph or two
 You can install the package via composer:
 
 ```bash
-composer require abegpay/abegpay-php
+composer require processwith/paywith-php
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ If you discover any security related issues, please email jeremiahikwuje@gmail.c
 
 ## Credits
 
-- [Jeremiah Ikwuje](https://github.com/abegpay)
+- [Jeremiah Ikwuje](https://github.com/processwith)
 - [All Contributors](../../contributors)
 
 ## License
