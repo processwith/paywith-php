@@ -4,7 +4,7 @@ use ProcessWith\Paywith;
 
 require 'vendor/autoload.php';
 
-$secret_key = 'sk_test_72c5b5f62558f8189aaeccae16ef0a9220be6521';
+$secret_key = 'sk_test_xxxxxx';
 
 $paywith = new Paywith('paystack', $secret_key);
 $transaction = $paywith->transaction();
