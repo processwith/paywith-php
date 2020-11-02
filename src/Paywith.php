@@ -1,15 +1,15 @@
 <?php
 
-namespace ProcessWith\Paywith;
+namespace ProcessWith;
 
 use Curl\Curl;
-use ProcessWith\Paywith\Helpers\DoWork;
+use ProcessWith\Helpers\DoSomething;
 
 /**
- * The To class
+ * The Paywith class
  * 
- * @author To
- * @link https://www.processwith.com/paywith
+ * @author ProcessWith
+ * @link https://www.processwith.com
  * @version 0.5
  */
 class Paywith
@@ -17,9 +17,10 @@ class Paywith
     /**
      *  List of supported payment gateways
      * 
+     * @var array
      * @version since 0.5
      */
-    protected $gateways = [
+    protected $processors = [
         'paystack',
         'flutterwave',
         'monnify',
@@ -27,32 +28,44 @@ class Paywith
     ];
     
     /**
-     * The current gateway in use
+     * The current processor in use
+     * 
+     * @var string
+     * @since 0.5
      */
-    protected $gateway;
+    protected $processor;
 
     /**
-     * API keys
+     * The API secret key
+     * 
+     * @var string
+     * @since 0.5
      */
-    private $secret_key;
+    private $secretKey;
 
     /**
      * The current gateway request
+     * 
+     * @var array
      * @since 0.5
      */
     public $request;
 
     /**
-     * Store the request response
+     * Store the default response
+     * 
+     * @var array
+     * @since 0.5
      */
     public $response = [
         'status'    => false,
-        'code'      => 201,
-        'message'   => "No response"
+        'message'   => '',
+        'data'      => []
     ];
 
     /**
      * The status code and message of a http request
+     * 
      * @param int $statusCode
      * @param string $statusMessage
      */
@@ -66,13 +79,6 @@ class Paywith
     public $requestHeaders;
 
     /**
-     * To response headers
-     * 
-     * @param stdClass
-     */
-    public $responseHeaders;
-
-    /**
      * The error code and message from a gateway request response
      * 
      * @param int $errorCode
@@ -80,51 +86,20 @@ class Paywith
      */
     public $errorCode;
     public $errorMessage;
-
-    /**
-     * Every single gateway have their own response from a request
-     * 
-     * This variable temporary store a response from a gateway
-     * 
-     * @param stdClass
-     */
-    public $gatewayResponse;
-
-    /**
-     * The Payment Gateway API URL
-     * 
-     * e.g https://api.paystack.co
-     */
-    public $url;
-
-    /**
-     * The current endpoint we are making request to
-     * 
-     * e.g $url/transaction
-     * 
-     * @param string
-     */
-    protected $endpoint;
     
 
     /**
      * Constructor
      * 
-     * Populate the gateway and other important properties
-     * 
-     * @param string $gateway is the name of the gateway
-     * @param string $secret_key is the secret of a gateway
+     * @since 0.5
      */
-    public function __construct($gateway, $secretKey) {
-        // if the gateway is supported
-        if (in_array( $gateway, $this->gateways)) {
-            $this->gateway = $gateway;
-            $this->secret_key = $secretKey;
+    public function __construct(string $processor, string $secretKey = '') {
+        $this->processor = $processor;
+        $this->secretKey = $secretKey;
 
-            $this->setGatewayRequest();
-        }
-        else {
-            die('Payment gateway not supported');
+        // if the Processor is not supported
+        if( ! in_array($processor, $this->processors) ) {
+            die('Processor not supported');
         }
     }
 
@@ -133,98 +108,37 @@ class Paywith
      * 
      * @param string $secretKey
      */
-    public function setSecretKey($secretKey)
+    public function setSecretKey(string $secretKey): void
     {
         $this->secretKey = $secretKey;
     }
 
-    /**
-     * Set the gateway urls, endpoint and headers
-     * 
-     * These values are fetch from the To database
-     * 
-     */
-    private function setGatewayRequest()
-    {
-        $gateway = $this->gateway ?: '';
-
-        $curl = new Curl();
-        $curl->setHeaders([
-            'Content-Type'  => 'application/json',
-            'Authorization' => sprintf('Bearer %s', $this->secretKey),
-        ]);
-        $curl->get(
-            sprintf('%s/headers', $this->$url),
-            [
-                'gateway' => $gateway,
-            ]
-        );
-        
-        if($curl->error) {
-            // an error occured
-            $this->statusCode       = $curl->errorCode;
-            $this->statusMessage    = $curl->errorMessage;
-        }
-        else {
-            // yes, did it
-            $this->statusCode       = $curl->httpStatusCode;
-            $this->statusMessage    = $curl->response->message;
-            $this->requestHeaders   = $curl->response->data;
-        }
-    }
-
-    public function getResponse()
+    public function getResponse(): array
     {
         return $this->response;
     }
 
     /**
-     * Request the Payment Gateway for a transaction
+     * Request the Payment Processor for a transaction
      * 
-     * If the gateway matches a particular gateway, run a request for that gateway
+     * If the processor matches a particular gateway, run a request for that gateway
      * 
      * @since 0.5 
      */
-    public function transaction(): object
+    public function transaction(): ?object
     {
         $transaction = null;
 
-        switch($this->name) {
+        switch(strtolower($this->processor)) {
             case 'paystack':
-
+                $transaction = new Paystack\Transaction($this->secretKey);
             break;
             case 'flutterwave':
+                $transaction = new Ravepay\Transaction($this->secretKey);
             break;
             default:
         }
 
-        if(!$transaction) {
-            return $transaction;
-        }
-        if ( $this->gateway === 'paystack' ) {
-            $this->request['body'] = [
-                'amount' => $data['amount'],
-                'email' => $data['email']
-            ];
-
-            $curl = new Curl();
-            $curl->setHeader('Content-Type', "application/json");
-            $curl->setHeader('Authorization', sprintf("Bearer %s", $this->secret_key));
-            $curl->post(
-                sprintf('%s/transaction/initialize', $this->endpoint),
-                $this->request['body']
-            );
-
-            $this->statusCode = $curl->httpStatusCode;
-
-            if ($curl->error) {
-                $this->response['message']  = $curl->errorMessage;
-                $this->response['code']     = $curl->errorCode;
-            }
-            else {
-                $this->response['body'] = $curl->getResponse();
-                $this->response['code'] = $curl->httpStatusCode;
-            }
-        }
+        return $transaction;
     }
 }

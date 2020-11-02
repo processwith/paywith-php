@@ -1,5 +1,5 @@
 {
-    "name": "processwith/paywith-php",
+    "name": "processwith/processwith-php",
     "description": "Easily switch from paystack to flutterwave(vice versa) in your PHP applications.",
     "keywords": [
         "processwith",
@@ -11,7 +11,7 @@
         "paylink",
         "monnify"
     ],
-    "homepage": "https://github.com/processwith/paywith",
+    "homepage": "https://github.com/processwith/processwith-php",
     "license": "MIT",
     "type": "library",
     "authors": [
@@ -31,12 +31,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ProcessWith\\Paywith\\": "src"
+            "ProcessWith\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Processwith\\Tests\\Paywith": "tests"
+            "ProcessWith\\Tests\\": "tests"
         }
     },
     "scripts": {

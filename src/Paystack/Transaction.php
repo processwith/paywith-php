@@ -1,9 +1,8 @@
 <?php
-
-namespace ProcessWith\Paywith\Paystack;
+namespace ProcessWith\Paystack;
 
 use Curl\Curl;
-use ProcessWith\Paywith\Paystack;
+use ProcessWith\Paystack\Paystack;
 
 class Transaction extends Paystack
 {
@@ -13,7 +12,7 @@ class Transaction extends Paystack
      * @var float
      * @since 0.5
      */
-    public $amount;
+    public $amount = 0;
 
     /**
      * The `email` of the transaction
@@ -29,7 +28,7 @@ class Transaction extends Paystack
      * @var array
      * @since 0.5
      */
-    public $fields;
+    public $fields = [];
 
     /**
      * The `reference` of the transaction
@@ -49,17 +48,29 @@ class Transaction extends Paystack
 
     /**
      * The transacion endpoint
+     * 
+     * @var string
+     * @since 0.5
      */
-    public $endpoint = 'transaction';
+    public $endpoint;
+
+    /**
+     * Checkout url
+     * 
+     * @var string
+     * @since 0.5
+     */
+    public $checkout_url;
 
     /**
      * Constructor
      * 
      * @since 0.5
      */
-    public function __construct()
+    public function __construct(string $secretKey)
     {
-        $this->endpoint = parent::getURL()
+        parent::__construct($secretKey);
+        $this->endpoint = sprintf('%s/%s', $this->URL, $this->endpoints['transactions'] );
     }
 
     /**
@@ -87,7 +98,7 @@ class Transaction extends Paystack
      * 
      * ---------------------------------------------------------------------
      * We make a request to the /transaction endpoint
-     * a response will be return containing the keys:
+     * a response will be returned:
      * {
      *      ...
      *      "authorization_url": "https://checkout.paystack.com/0peioxfhpn",
@@ -101,22 +112,52 @@ class Transaction extends Paystack
      * @link https://paystack.com/docs/api/#transaction
      * @since 0.5
      */
-    public function initialize(array $body):void
+    public function initialize( $fields = [] ) : void
     {
-        $curl = new Curl();
-        $curl->setHeader('Content-Type', "application/json");
-        $curl->setHeader('Authorization', sprintf("Bearer %s", $this->secret_key));
-        $curl->post(
-            sprintf('%s/initialize', $this->endpoint),
-            $body
-        );
-        
-        if (!$curl->error) {
-            parent::setResponse($curl->getResponse());
+        if( array_key_exists('amount', $fields) ) {
+            $this->amount = $fields['amount'];
+        }
+
+        if( array_key_exists('email', $fields) ) {
+            $this->email = $fields['email'];
         }
         else {
-            parent::setResponse();
+            if( !$this->email ) {
+                $this->email = sprintf('user%@gmail.com', time() );
+            }
         }
+
+        if( array_key_exists('fields', $fields) ) {
+            $this->fields = $fields['fields'];
+        }
+
+        $this->body = [
+            'amount'    => $this->amount,
+            'email'     => $this->email,
+            'meta_data' => $fields
+        ];
+
+        $curl = new Curl();
+        $curl->setHeaders( $this->getHeaders() );
+        $curl->post( sprintf('%s/initialize', $this->endpoint), $this->body);
+        
+        if( $curl->error ) {
+            $this->statusCode       = $curl->errorCode;
+            $this->statusMessage    = $curl->errorMessage;
+        }
+        else {
+            $this->status       = true;
+            $this->reference    = $curl->response->data->reference;
+            $this->checkout_url = $curl->response->data->authorization_url;
+
+            $this->setResponse($curl->response);
+        }
+    }
+
+    public function checkout(): void
+    {
+        header( sprintf('Location:%s', $this->checkout_url) );
+        die();
     }
 
     /**
