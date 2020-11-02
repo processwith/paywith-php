@@ -6,6 +6,10 @@ class Paystack extends Processor
 {
     private const API_URL = 'https://api.paystack.co';
 
+    public array $endPoints = [];
+
+    private array $headers =  [];
+
     /**
      * Constructor
      * 
@@ -16,4 +20,10 @@ class Paystack extends Processor
     {
         parent('Paystack', $secretKey, self::API_URL);
     }
+
+    public function getEndpoints() : array
+    {}
+
+    public function setHeaders(array, $headers) : void
+    {}
 }
