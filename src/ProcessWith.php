@@ -6,13 +6,13 @@ use Curl\Curl;
 use ProcessWith\Helpers\DoSomething;
 
 /**
- * The Paywith class
+ * The Processwith class
  * 
  * @author ProcessWith
  * @link https://www.processwith.com
  * @version 0.5
  */
-class Paywith
+class ProcessWith
 {
     /**
      *  List of supported payment gateways
