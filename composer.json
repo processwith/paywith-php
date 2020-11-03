@@ -28,7 +28,7 @@
         "phpunit/phpunit": "^7.0"
     },
     "suggest": {
-        "php-curl-class/php-curl-class": "PHP Curl Class makes it easy to send HTTP requests and integrate with web APIs."
+        "php-curl-class/php-curl-class": "PHP Curl Class makes it easy to send HTTP requests"
     },
     "autoload": {
         "psr-4": {
