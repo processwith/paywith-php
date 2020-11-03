@@ -3,7 +3,6 @@
 [![](https://img.shields.io/github/release/processwith/processwith-php.svg)](https://github.com/processwith/processwith-php/releases/)
 [![](https://img.shields.io/github/license/processwith/processwith-php.svg)](https://github.com/processwith/processwith-php/blob/master/LICENSE)
 [![](https://img.shields.io/travis/processwith/processwith-php.svg)](https://travis-ci.com/github/processwith/processwith-php/)
-[![](https://img.shields.io/packagist/dt/processwith/processwith-php.svg)](https://github.com/processwith/processwith-php/releases/)
 
 ProcessWith makes it easy to switch payment gateway.
 

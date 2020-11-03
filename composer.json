@@ -16,9 +16,8 @@
     "type": "library",
     "authors": [
         {
-            "name": "Jeremiah Ikwuje",
-            "email": "jeremiahikwuje@gmail.com",
-            "role": "Developer"
+            "name": "ProcessWith API Team",
+            "email": "hello@processwith.com",
         }
     ],
     "require": {
@@ -27,6 +26,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0"
+    },
+    "suggest": {
+        "php-curl-class/php-curl-class": "An HTTP client to execute the API requests"
     },
     "autoload": {
         "psr-4": {
