@@ -23,8 +23,7 @@
     ],
     "require": {
         "php": "^7.1",
-        "php-curl-class/php-curl-class": "^8.8",
-        "yabacon/paystack-php": "^2.2"
+        "php-curl-class/php-curl-class": "^8.8"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.0"
