@@ -1,7 +1,6 @@
 <?php
 namespace ProcessWith\Processors\Paystack;
 
-use Curl\Curl;
 use ProcessWith\Processors\Paystack\Paystack;
 
 class Transaction extends Paystack
@@ -23,12 +22,12 @@ class Transaction extends Paystack
     public $email;
 
     /**
-     * Optional fields of the transaction
+     * Metadata of the transaction
      * 
      * @var array
      * @since 0.5
      */
-    public $fields = [];
+    public $metadata = [];
 
     /**
      * The `reference` of the transaction
@@ -53,6 +52,13 @@ class Transaction extends Paystack
      * @since 0.5
      */
     public $endpoint;
+
+    /**
+     * The callback url
+     * 
+     * @var string
+     */
+    public $callback_url;
 
     /**
      * Checkout url
@@ -90,7 +96,7 @@ class Transaction extends Paystack
      */
     public function getReference():string
     {
-        return $reference;
+        return $this->reference;
     }
 
     /**
@@ -112,14 +118,14 @@ class Transaction extends Paystack
      * @link https://paystack.com/docs/api/#transaction
      * @since 0.5
      */
-    public function initialize( $fields = [] ) : void
+    public function initialize( $body = [] ) : void
     {
-        if( array_key_exists('amount', $fields) ) {
-            $this->amount = $fields['amount'];
+        if( array_key_exists('amount', $body) ) {
+            $this->amount = $body['amount'];
         }
 
-        if( array_key_exists('email', $fields) ) {
-            $this->email = $fields['email'];
+        if( array_key_exists('email', $body) ) {
+            $this->email = $body['email'];
         }
         else {
             if( !$this->email ) {
@@ -127,30 +133,29 @@ class Transaction extends Paystack
             }
         }
 
-        if( array_key_exists('fields', $fields) ) {
-            $this->fields = $fields['fields'];
+        if ( array_key_exists('callback_url', $body) ) {
+            $this->callback_url = $body['callback_url'];
         }
 
-        $this->body = [
-            'amount'    => $this->amount,
-            'email'     => $this->email,
-            'meta_data' => $fields
-        ];
+        if ( array_key_exists('metadata', $body) ) {
+            $this->callback_url = $body['metadata'];
+        }
 
-        $curl = new Curl();
-        $curl->setHeaders( $this->getHeaders() );
-        $curl->post( sprintf('%s/initialize', $this->endpoint), $this->body);
+        $this->body = $body;
+
+        $request = $this->request;
+        $request->post( sprintf('%s/initialize', $this->endpoint), $this->body);
         
-        if( $curl->error ) {
-            $this->statusCode       = $curl->errorCode;
-            $this->statusMessage    = $curl->errorMessage;
+        if( $request->error ) {
+            $this->statusCode       = $request->errorCode;
+            $this->statusMessage    = $request->errorMessage;
         }
         else {
             $this->status       = true;
-            $this->reference    = $curl->response->data->reference;
-            $this->checkout_url = $curl->response->data->authorization_url;
+            $this->reference    = $request->response->data->reference;
+            $this->checkout_url = $request->response->data->authorization_url;
 
-            $this->setResponse($curl->response);
+            $this->setResponse($request->response);
         }
     }
 
@@ -174,12 +179,40 @@ class Transaction extends Paystack
      * @link https://paystack.com/docs/api/#transaction-verify
      * @since 0.5
      */
-    public function verify(string $reference):bool
+    public function verify(string $reference = ''): void
     {
+        $this->status = false; // default status
+
         if(empty($reference)) {
-            return false;
+            $reference = $this->reference;
         }
 
+        if(empty($reference)) {
+            $this->statusCode       = 400;
+            $this->statusMessage    = 'No reference supplied';
+        }
+
+        $request = $this->request;
+        $request->get(sprintf('%s/verify/%s', $this->endpoint, $reference));
+
+        if($request->error) {
+            $this->statusCode       = $request->errorCode;
+            $this->statusMessage    = $request->errorMessage;
+        }
+        else {
+            $this->setResponse($request->response);
+
+            $this->reference    = $request->response->data->reference;
+            $this->amount       = $request->response->data->amount;
+            $this->email        = $request->response->data->customer->email;
+
+            $this->statusMessage= $request->response->data->gateway_response;
+            $this->statusCode   = $request->getHttpStatusCode();
+
+            if('success' == $request->response->data->status) {
+                $this->status = true;
+            }
+        }
     }
 
     /**
@@ -194,8 +227,39 @@ class Transaction extends Paystack
      * @link 
      * @since 0.5
      */
-    public function webhook():bool
+    public function webhook(): void
     {
+        $this->status = false; // default status
 
+        // only a post with paystack signature header gets our attention
+        if ((strtoupper($_SERVER['REQUEST_METHOD']) != 'POST' ) || !array_key_exists('x-paystack-signature', $_SERVER) ) {
+            $this->statusMessage    = 'Invalid Paystack POST signature';
+            $this->statusCode       = 400;
+        }
+
+        // Retrieve the request's body
+        $input = @file_get_contents("php://input");
+
+        // validate event do all at once to avoid timing attack
+        if ($_SERVER['HTTP_X_PAYSTACK_SIGNATURE'] !== hash_hmac('sha512', $input, $this->getSecretKey()))
+        {
+            $this->statusMessage    = 'Invalid Paystack event signature';
+            $this->statusCode       = 400;
+        }
+
+        http_response_code(200);
+
+        // parse event (which is json string) as object
+        // Do something - that will not take long - with $event
+        $event = json_decode($input);
+
+        $this->amount   = $event->data->amount;
+        $this->email    = $event->data->customer->email;
+        $this->reference= $event->data->reference;
+
+        $this->response         = $event;
+        $this->status           = true;
+        $this->statusCode       = 200;
+        $this->statusMessage    = $event->data->gateway_response;
     }
 }

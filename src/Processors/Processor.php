@@ -29,7 +29,7 @@ abstract class Processor
     public $URL;
     
     /**
-     * Secret or Private key of the processor
+     * Secret/Private key of the merchant
      * 
      * @var string
      * @since 0.5
@@ -69,21 +69,21 @@ abstract class Processor
      * 
      * @var bool $status
      */
-    public $status = false;
+    protected $status = false;
 
     /**
      * The status code and message of a http request
      * 
      * @var int
      */
-    public $statusCode;
+    protected $statusCode;
 
     /**
      * The status code and message of an http request
      * 
      * @var string
      */
-    public $statusMessage;
+    protected $statusMessage;
 
     /**
      * Constructor
@@ -123,6 +123,16 @@ abstract class Processor
     abstract public function setResponse(object $response):void;
 
     /**
+     * Get the secret/private key of the merchant 
+     * 
+     * @since 0.5
+     */
+    public function getSecretKey(): string
+    {
+        return $this->secretKey;
+    }
+
+    /**
      * Get the request headers of the processor
      * 
      * @since 0.5
@@ -140,5 +150,20 @@ abstract class Processor
     public function getResponse(): object
     {
         return (object) $this->response;
+    }
+
+    public function status() : bool
+    {
+        return $this->status;
+    }
+
+    public function statusMessage() : string
+    {
+        return $this->statusMessage;
+    }
+
+    public function statusCode() : int
+    {
+        return $this->statusCode;
     }
 }

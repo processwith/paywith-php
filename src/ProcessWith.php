@@ -43,50 +43,6 @@ class ProcessWith
      * @since 0.5
      */
     private $secretKey;
-
-    /**
-     * The current gateway request
-     * 
-     * @var array
-     * @since 0.5
-     */
-    public $request;
-
-    /**
-     * Store the default response
-     * 
-     * @var array
-     * @since 0.5
-     */
-    public $response = [
-        'status'    => false,
-        'message'   => '',
-        'data'      => []
-    ];
-
-    /**
-     * The status code and message of a http request
-     * 
-     * @param int $statusCode
-     * @param string $statusMessage
-     */
-    public $statusCode;
-    public $statusMessage;
-
-    /**
-     * Request headers
-     * @param stdClass
-     */
-    public $requestHeaders;
-
-    /**
-     * The error code and message from a gateway request response
-     * 
-     * @param int $errorCode
-     * @param string $errorMessage
-     */
-    public $errorCode;
-    public $errorMessage;
     
 
     /**

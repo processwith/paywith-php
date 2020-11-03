@@ -2,6 +2,7 @@
 
 namespace ProcessWith\Processors\Paystack;
 
+use Curl\Curl;
 use ProcessWith\Processors\Processor;
 
 class Paystack extends Processor
@@ -12,6 +13,13 @@ class Paystack extends Processor
     protected $endpoints = [
         'transactions' => 'transaction'
     ];
+
+    /**
+     * Curl request
+     * 
+     * @var Curl
+     */
+    protected $request;
 
     /**
      * Constructor
@@ -26,6 +34,9 @@ class Paystack extends Processor
             'Authorization' => sprintf('Bearer %s', $secretKey),
             'Content-Type'  => 'application/json',
         ]);
+
+        $this->request = new Curl();
+        $this->request->setHeaders( $this->getHeaders() );
     }
 
     public function setHeaders(array $headers): void
@@ -38,6 +49,6 @@ class Paystack extends Processor
         $this->response['status']   = $response->status;
         $this->response['message']  = $response->message;
         $this->response['client']   = $response->data;
-        $this->client_response = $response;
+        $this->client_response      = $response;
     }
 }
