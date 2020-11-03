@@ -1,8 +1,8 @@
 <?php
-namespace ProcessWith\Processors;
+namespace ProcessWith\Processors\Paystack;
 
 use Curl\Curl;
-use ProcessWith\Paystack\Paystack;
+use ProcessWith\Processors\Paystack\Paystack;
 
 class Transaction extends Paystack
 {

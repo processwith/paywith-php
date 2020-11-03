@@ -1,11 +1,11 @@
 <?php
 
-namespace ProcessWith;
+namespace ProcessWith\Processors;
 
 /**
  * The blueprint class of any payment processor that is supported
  * 
- * @package Paywith
+ * @package ProcessWith
  * @subpackage Processor
  * @author ProcessWith
  * @since 0.5

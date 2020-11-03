@@ -1,5 +1,5 @@
 <?php
-namespace Processwith\Helpers;
+namespace ProcessWith\Helpers;
 
 class DoSomething
 {

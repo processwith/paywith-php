@@ -1,8 +1,8 @@
 <?php
 
-namespace ProcessWith\Processors;
+namespace ProcessWith\Processors\Paystack;
 
-use ProcessWith\Processor;
+use ProcessWith\Processors\Processor;
 
 class Paystack extends Processor
 {

@@ -4,9 +4,10 @@ namespace ProcessWith;
 
 use Curl\Curl;
 use ProcessWith\Helpers\DoSomething;
+use ProcessWith\Processors\Paystack;
 
 /**
- * The Processwith class
+ * The ProcessWith class
  * 
  * @author ProcessWith
  * @link https://www.processwith.com
