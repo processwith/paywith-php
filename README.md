@@ -1,4 +1,4 @@
-# ProcessWith PHP [Not]
+# ProcessWith PHP
 
 [![](https://img.shields.io/github/release/processwith/processwith-php.svg)](https://github.com/processwith/processwith-php/releases/)
 [![](https://img.shields.io/github/license/processwith/processwith-php.svg)](https://github.com/processwith/processwith-php/blob/master/LICENSE)
