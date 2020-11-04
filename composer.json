@@ -17,7 +17,7 @@
     "authors": [
         {
             "name": "ProcessWith API Team",
-            "email": "hello@processwith.com",
+            "email": "hello@processwith.com"
         }
     ],
     "require": {
