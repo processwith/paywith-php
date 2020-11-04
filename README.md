@@ -11,13 +11,13 @@ ProcessWith makes it easy to switch payment gateway.
 You can install the package via composer:
 
 ```bash
-composer require processwith/paywith-php
+composer require processwith/processwith-php
 ```
 
 ## Usage
 
 ``` php
-// Usage description here
+    
 ```
 
 ### Testing

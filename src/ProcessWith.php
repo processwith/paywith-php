@@ -70,15 +70,8 @@ class ProcessWith
         $this->secretKey = $secretKey;
     }
 
-    public function getResponse(): array
-    {
-        return $this->response;
-    }
-
     /**
-     * Request the Payment Processor for a transaction
-     * 
-     * If the processor matches a particular gateway, run a request for that gateway
+     * Return the transaction object for the current processor
      * 
      * @since 0.5 
      */
@@ -94,6 +87,7 @@ class ProcessWith
                 $transaction = new Ravepay\Transaction($this->secretKey);
             break;
             default:
+                //$transaction = new Processwith\transaction($this->secretKey);
         }
 
         return $transaction;
