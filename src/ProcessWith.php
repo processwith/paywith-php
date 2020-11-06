@@ -4,7 +4,8 @@ namespace ProcessWith;
 
 use Curl\Curl;
 use ProcessWith\Helpers\DoSomething;
-use ProcessWith\Processors\Paystack;
+use ProcessWith\Processors\Paystack\Transaction as PaystackTranx;
+use ProcessWith\Processors\Flutterwave\Transaction as RaveTranx;
 
 /**
  * The ProcessWith class
@@ -81,10 +82,10 @@ class ProcessWith
 
         switch(strtolower($this->processor)) {
             case 'paystack':
-                $transaction = new Paystack\Transaction($this->secretKey);
+                $transaction = new PaystackTranx($this->secretKey);
             break;
             case 'flutterwave':
-                $transaction = new Ravepay\Transaction($this->secretKey);
+                $transaction = new RaveTranx($this->secretKey);
             break;
             default:
                 //$transaction = new Processwith\transaction($this->secretKey);
