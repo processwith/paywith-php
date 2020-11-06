@@ -54,11 +54,11 @@ class Transaction extends Paystack
     public $endpoint;
 
     /**
-     * The callback url
+     * The redirect url
      * 
      * @var string
      */
-    public $callback_url;
+    public $redirect_url;
 
     /**
      * Checkout url
@@ -118,35 +118,40 @@ class Transaction extends Paystack
      * @link https://paystack.com/docs/api/#transaction
      * @since 0.5
      */
-    public function initialize( $body = [] ) : void
+    public function initialize(array $fields = []) : void
     {
-        if( array_key_exists('amount', $body) ) {
-            $this->amount = $body['amount'];
-        }
-
-        if( array_key_exists('email', $body) ) {
-            $this->email = $body['email'];
-        }
+        if( array_key_exists('amount', $fields) ) {
+            $this->amount = $fields['amount'];
+        } 
         else {
-            if( !$this->email ) {
-                $this->email = sprintf('user%@gmail.com', time() );
+            if( $this->amount == 0 ) {
+                throw new PayException('Amount is required');
             }
         }
 
-        if ( array_key_exists('callback_url', $body) ) {
-            $this->callback_url = $body['callback_url'];
+        if( array_key_exists('email', $body) ) {
+            $this->email = $fields['email'];
+        }
+        else {
+            if( ! $this->email ) {
+                throw new PayException('Email is required');
+            }
         }
 
-        if ( array_key_exists('metadata', $body) ) {
-            $this->callback_url = $body['metadata'];
+        if( array_key_exists('redirect_url', $body) ) {
+            $this->redirect_url = $fields['redirect_url'];
         }
 
-        $this->body = $body;
+        if( array_key_exists('metadata', $fields) ) {
+            $this->metadata = $fields['metadata'];
+        }
+
+        $this->body = $fields;
 
         $request = $this->request;
-        $request->post( sprintf('%s/initialize', $this->endpoint), $this->body);
+        $request->post( sprintf('%s/initialize', $this->endpoint), $this->body );
         
-        if( $request->error ) {
+        if($request->error) {
             $this->statusCode       = $request->errorCode;
             $this->statusMessage    = $request->errorMessage;
         }
@@ -183,17 +188,17 @@ class Transaction extends Paystack
     {
         $this->status = false; // default status
 
-        if(empty($reference)) {
+        if( empty($reference) ) {
             $reference = $this->reference;
         }
 
-        if(empty($reference)) {
+        if( empty($reference) ) {
             $this->statusCode       = 400;
             $this->statusMessage    = 'No reference supplied';
         }
 
         $request = $this->request;
-        $request->get(sprintf('%s/verify/%s', $this->endpoint, $reference));
+        $request->get( sprintf('%s/verify/%s', $this->endpoint, $reference) );
 
         if($request->error) {
             $this->statusCode       = $request->errorCode;
@@ -232,7 +237,7 @@ class Transaction extends Paystack
         $this->status = false; // default status
 
         // only a post with paystack signature header gets our attention
-        if ((strtoupper($_SERVER['REQUEST_METHOD']) != 'POST' ) || !array_key_exists('x-paystack-signature', $_SERVER) ) {
+        if( (strtoupper($_SERVER['REQUEST_METHOD']) != 'POST' ) || !array_key_exists('x-paystack-signature', $_SERVER) ) {
             $this->statusMessage    = 'Invalid Paystack POST signature';
             $this->statusCode       = 400;
         }
@@ -241,7 +246,7 @@ class Transaction extends Paystack
         $input = @file_get_contents("php://input");
 
         // validate event do all at once to avoid timing attack
-        if ($_SERVER['HTTP_X_PAYSTACK_SIGNATURE'] !== hash_hmac('sha512', $input, $this->getSecretKey()))
+        if( $_SERVER['HTTP_X_PAYSTACK_SIGNATURE'] !== hash_hmac('sha512', $input, $this->getSecretKey()) )
         {
             $this->statusMessage    = 'Invalid Paystack event signature';
             $this->statusCode       = 400;

@@ -50,19 +50,7 @@ abstract class Processor
      * @var array
      * @since 0.5
      */
-    protected $response = [
-        'status'    => false,
-        'message'   => '',
-        'client'    => [], 
-    ];
-
-    /**
-     * The response body per request sent
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $client_response;
+    protected $response;
 
     /**
      * The status code a processor request

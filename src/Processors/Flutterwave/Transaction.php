@@ -84,7 +84,7 @@ class Transaction extends Flutterwave
      * 
      * @var string
      */
-    public $callback_url;
+    public $redirect_url;
 
     /**
      * Checkout url
@@ -94,13 +94,6 @@ class Transaction extends Flutterwave
      */
     public $checkout_url;
 
-    /**
-     * Checkout url
-     * 
-     * @var string
-     * @since 0.5
-     */
-    public $VerifyResponse;
 
     /**
      * Constructor
@@ -152,7 +145,7 @@ class Transaction extends Flutterwave
      * @param $redirect if it set to true, we redirect to the Ravepay checkout page
      * @since 0.5
      */
-    public function initialize( $fields = [] ) /*: void */
+    public function initialize(array $fields = []) : void
     {
 
         $this->currency = array_key_exists('currency', $fields) ? $fields['currency'] : 'NGN';
@@ -163,15 +156,15 @@ class Transaction extends Flutterwave
             $this->amount = $fields['amount'];
         } 
         else {
-            throw new PayException('amount array key is required') ;
+            throw new PayException('amount field is required') ;
         }
 
 
         if( array_key_exists('redirect_url', $fields) ) {
-            $this->callback_url = $fields['redirect_url'];
+            $this->redirect_url = $fields['redirect_url'];
         }
         else {
-            throw new PayException('redirect_url array key is required'); 
+            throw new PayException('redirect_url field is required'); 
         }
 
 
@@ -180,11 +173,11 @@ class Transaction extends Flutterwave
                 $this->customer = $fields['customer'];
             }
             else {
-                throw new PayException("The consumer array requires an email field"); 
+                throw new PayException("The consumer array field requires an email"); 
             }
         }
         else {
-            throw new PayException("The consumer array is required");
+            throw new PayException("The consumer field is required");
         }
         
 
@@ -192,7 +185,7 @@ class Transaction extends Flutterwave
             'tx_ref'          => bin2hex(random_bytes(7)),
             'amount'          => $this->amount,
             'currency'        => $this->currency,
-            'redirect_url'    => $this->callback_url,
+            'redirect_url'    => $this->redirect_url,
             'payment_options' => $this->payOption, 
             'meta'            => $this->metaData,
             'customer'        => $this->customer            
@@ -240,7 +233,7 @@ class Transaction extends Flutterwave
         
         $this->status = false; // default status
 
-        if(empty($reference)) {
+        if( empty($reference) ) {
             $this->statusCode       = 400;
             $this->statusMessage    = 'No reference supplied';
         }
@@ -268,17 +261,6 @@ class Transaction extends Flutterwave
             }
         }
 
-    }
-   
-    /**
-     * verification request response
-     *
-     * @link https://developer.flutterwave.com/docs/transaction-verification
-     * @since 0.5
-     */
-    public function verifyResponse() 
-    {
-        return $this->verifyResponse;
     }
 
     /**

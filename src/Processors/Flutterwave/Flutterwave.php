@@ -38,17 +38,4 @@ class Flutterwave extends Processor
         $this->request = new Curl();
         $this->request->setHeaders( $this->getHeaders() );
     }
-
-    public function setHeaders(array $headers): void
-    {
-        $this->headers = $headers;
-    }
-
-    public function setResponse(object $response): void
-    {
-        $this->response['status']   = $response->status;
-        $this->response['message']  = $response->message;
-        $this->response['client']   = $response->data;
-        $this->client_response      = $response;
-    }
 }
