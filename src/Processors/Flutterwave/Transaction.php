@@ -42,7 +42,7 @@ class Transaction extends Flutterwave
     /**
      * fallback if payment option not set
      * 
-     * @var array
+     * @var string
      * @since 0.5
      */
     public $payOption = 'card';
@@ -53,7 +53,7 @@ class Transaction extends Flutterwave
      * @var array
      * @since 0.5
      */
-    public $metaData = [];
+    public $metadata = [];
 
     /**
      * The `reference` of the transaction
@@ -150,7 +150,7 @@ class Transaction extends Flutterwave
 
         $this->currency = array_key_exists('currency', $fields) ? $fields['currency'] : 'NGN';
 
-        $this->metaData = array_key_exists('meta', $fields) ? $fields['meta'] : $fields['customer'];
+        $this->metadata = array_key_exists('meta', $fields) ? $fields['meta'] : $fields['customer'];
 
         if( array_key_exists('amount', $fields) ) {
             $this->amount = $fields['amount'];
@@ -187,7 +187,7 @@ class Transaction extends Flutterwave
             'currency'        => $this->currency,
             'redirect_url'    => $this->redirect_url,
             'payment_options' => $this->payOption, 
-            'meta'            => $this->metaData,
+            'meta'            => $this->metadata,
             'customer'        => $this->customer            
         ];
 
