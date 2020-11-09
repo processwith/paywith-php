@@ -2,6 +2,7 @@
 namespace ProcessWith\Processors\Paystack;
 
 use ProcessWith\Processors\Paystack\Paystack;
+use ProcessWith\Exceptions\PayException;
 
 class Transaction extends Paystack
 {

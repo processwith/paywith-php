@@ -13,7 +13,7 @@ class Transaction extends Flutterwave
      * @var float
      * @since 0.5
      */
-    public $amount = 0;
+    protected $amount = 0;
 
     /**
      * The `email` of the transaction
@@ -21,7 +21,7 @@ class Transaction extends Flutterwave
      * @var string
      * @since 0.5
      */
-    public $email;
+    protected $email;
 
     /**
      * The customer 
@@ -29,7 +29,7 @@ class Transaction extends Flutterwave
      * @var array
      * @since 0.5
      */
-    public $customer = [];
+    protected $customer = [];
 
     /**
      * Transaction dafualt currency 
@@ -37,7 +37,7 @@ class Transaction extends Flutterwave
      * @var array
      * @since 0.5
      */
-    public $currency;
+    protected $currency;
 
     /**
      * fallback if payment option not set
@@ -53,7 +53,7 @@ class Transaction extends Flutterwave
      * @var array
      * @since 0.5
      */
-    public $metadata = [];
+    protected $metadata = [];
 
     /**
      * The `reference` of the transaction
@@ -69,7 +69,7 @@ class Transaction extends Flutterwave
      * @var array
      * @since 0.5
      */
-    public $body;
+    protected $body;
 
     /**
      * The transacion endpoint
@@ -77,14 +77,14 @@ class Transaction extends Flutterwave
      * @var string
      * @since 0.5
      */
-    public $endpoint;
+    protected $endpoint;
 
     /**
      * The callback url
      * 
      * @var string
      */
-    public $redirect_url;
+    protected $redirect_url;
 
     /**
      * Checkout url
@@ -92,7 +92,7 @@ class Transaction extends Flutterwave
      * @var string
      * @since 0.5
      */
-    public $checkout_url;
+    protected $checkout_url;
 
 
     /**
@@ -106,6 +106,24 @@ class Transaction extends Flutterwave
         $this->endpoint = sprintf('%s/%s', $this->URL, $this->endpoints['payments'] );
     }
 
+    public function setAmount(float $amount):void
+    {
+        $this->amount = $amount;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @since 0.5
+     */
+    public function setCustomer(array $customer): void
+    {
+        $this->customer = $customer;
+    }
+
     /**
      * Set the reference of the transaction
      * 
@@ -114,6 +132,32 @@ class Transaction extends Flutterwave
     public function setReference(string $reference):void
     {
         $this->reference = $reference;
+    }
+
+    public function setBody(array $body): void
+    {
+        $this->body = $body;
+    }
+
+    public function setEndpoint(string $endpoint): void
+    {
+        $this->endpoint = $endpoint;
+    }
+
+    /**
+     * @since v0.5
+     */
+    public function setCurrency(string $currency): void
+    {
+        $supported = [
+
+        ];
+
+        if (! in_array($currency, $supported)) {
+            throw Exception('Currency not supported');
+        }
+
+        $this->currency = $currency;
     }
 
     /**

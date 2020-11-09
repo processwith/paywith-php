@@ -87,6 +87,16 @@ abstract class Processor
     }
 
     /**
+     * Set the name of the processor
+     * 
+     * @since 0.5
+     */
+    public function setName(string $name):void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * Set the secret or private key of the processor
      * 
      * @since 0.5
@@ -94,6 +104,16 @@ abstract class Processor
     public function setSecretKey(string $secret):void
     {
         $this->secretKey = $secret;
+    }
+
+    /**
+     * Set the API URL of the processor
+     * 
+     * @since 0.5
+     */
+    public function setURL(string $URL):void
+    {
+        $this->URL = $URL;
     }
 
     /**
@@ -111,6 +131,16 @@ abstract class Processor
     abstract public function setResponse(object $response):void;
 
     /**
+     * Get the name of the processor 
+     * 
+     * @since 0.5
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * Get the secret/private key of the merchant 
      * 
      * @since 0.5
@@ -118,6 +148,16 @@ abstract class Processor
     public function getSecretKey(): string
     {
         return $this->secretKey;
+    }
+
+    /**
+     * Get the URL of the gateway 
+     * 
+     * @since 0.5
+     */
+    public function getURL(): string
+    {
+        return $this->URL;
     }
 
     /**

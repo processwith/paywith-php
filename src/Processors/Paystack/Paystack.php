@@ -38,4 +38,14 @@ class Paystack extends Processor
         $this->request = new Curl();
         $this->request->setHeaders( $this->getHeaders() );
     }
+
+    public function setHeaders(array $headers): void
+    {
+        $this->headers = $headers;
+    }
+
+    public function setResponse(object $response): void
+    {
+        $this->response = $response;
+    }
 }
