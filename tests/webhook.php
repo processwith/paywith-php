@@ -4,19 +4,18 @@ use ProcessWith\ProcessWith;
 require '../vendor/autoload.php';
 require 'config.php';
 
-$amount = '50000';
-$email  = 'ikwuje24@gmail.com';
+$amount = '1000';
+$email  = 'ikwuje@gmail.com';
 
-$processwith = new ProcessWith( 'paystack' );
-$processwith->setSecretKey( SECRET_KEY );
+$processwith = new ProcessWith('paystack', PSTK_SECRET_KEY);
 
 $transaction = $processwith->transaction();
 $transaction->webhook();
 
-if ( $transaction->status() ) {
+if ($transaction->status()) {
     // check the email and the amount
     // before giving value
-    if ( $amount == $transaction->amount && $email == $transaction->email ) {
+    if ( $amount == $transaction->getAmount() && $email == $transaction->getEmail() ) {
         file_put_contents( 'hook.txt', 'Thanks for making a payment' );
     }
     else {
@@ -24,5 +23,5 @@ if ( $transaction->status() ) {
     }
 }
 else {
-    file_put_contents( 'hook.txt', $transaction->statusMessage() );
+    file_put_contents( 'hook.txt', $transaction->getMessage() );
 }

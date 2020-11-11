@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace ProcessWith\Processors;
+
+use ProcessWith\Helpers\DoSomething;
 
 /**
  * The blueprint class of any payment processor that is supported
@@ -53,6 +55,14 @@ abstract class Processor
     protected $response;
 
     /**
+     * The raw response body per request sent
+     * 
+     * @var array
+     * @since 0.5
+     */
+    protected $response_raw;
+
+    /**
      * The status code a processor request
      * 
      * @var bool $status
@@ -64,14 +74,14 @@ abstract class Processor
      * 
      * @var int
      */
-    protected $statusCode;
+    protected $httpStatusCode;
 
     /**
      * The status code and message of an http request
      * 
      * @var string
      */
-    protected $statusMessage;
+    protected $message;
 
     /**
      * Constructor
@@ -81,7 +91,7 @@ abstract class Processor
      */
     public function __construct(string $name, string $secretKey, $URL)
     {
-        $this->name         = $name;
+        $this->name         = ucwords($name);
         $this->secretKey    = $secretKey;
         $this->URL          = $URL;
     }
@@ -93,7 +103,7 @@ abstract class Processor
      */
     public function setName(string $name):void
     {
-        $this->name = $name;
+        $this->name = ucwords($name);
     }
 
     /**
@@ -113,6 +123,10 @@ abstract class Processor
      */
     public function setURL(string $URL):void
     {
+        if(! DoSomething::goodURL($URL)) {
+            throw new PayException($this->name .': API url not valid');
+        }
+
         $this->URL = $URL;
     }
 
@@ -131,13 +145,57 @@ abstract class Processor
     abstract public function setResponse(object $response):void;
 
     /**
+     * Set the API URL of the processor
+     * 
+     * @since 0.5
+     */
+    public function setRawResponse($raw):void
+    {
+        $this->response_raw = $raw;
+    }
+
+    /**
+     * Set the HTTP request message
+     */
+    final public function setMessage(string $message = '', int $code = 200): void
+    {
+        $this->name = \ucwords($this->name);
+
+        if (200 == $code) {
+            $code = $this->httpStatusCode ?? 0;
+        }
+
+        if (200 === $code) {
+            $this->message = $this->name . ': ' . $message;
+        }
+        else if (201 === $code) {
+            $this->message = $this->name . ': ' . $message;
+        }
+        else if (400 === $code) {
+            $this->message = $this->name . ': Bad Request';
+        }
+        else if (401 === $code) {
+            $this->message = $this->name . ': Unauthorised Request';
+        }
+        else if (404 === $code) {
+            $this->message = $this->name . ': Not found';
+        }
+        else if (500 === $code) {
+            $this->message = $this->name . ': Internal server error';
+        }
+        else if (501 === $code) {
+            $this->message = $this->name . ': Service unavailable';
+        }
+    }
+
+    /**
      * Get the name of the processor 
      * 
      * @since 0.5
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->name ?? '';
     }
 
     /**
@@ -147,7 +205,7 @@ abstract class Processor
      */
     public function getSecretKey(): string
     {
-        return $this->secretKey;
+        return $this->secretKey ?? '';
     }
 
     /**
@@ -157,7 +215,7 @@ abstract class Processor
      */
     public function getURL(): string
     {
-        return $this->URL;
+        return $this->URL ?? '';
     }
 
     /**
@@ -165,7 +223,7 @@ abstract class Processor
      * 
      * @since 0.5
      */
-    public function getHeaders():array
+    public function getHeaders(): array
     {
         return $this->headers;
     }
@@ -180,18 +238,28 @@ abstract class Processor
         return (object) $this->response;
     }
 
-    public function status() : bool
+    /**
+     * Get the raw response body of a request from the processor
+     * 
+     * @since 0.5
+     */
+    final public function getRawResponse()
+    {
+        return $this->response_raw;
+    }
+
+    final public function status(): bool
     {
         return $this->status;
     }
 
-    public function statusMessage() : string
+    final public function getMessage(): string
     {
-        return $this->statusMessage;
+        return $this->message ?? 'No request';
     }
 
-    public function statusCode() : int
+    final public function getHttpStatusCode(): int
     {
-        return $this->statusCode;
+        return $this->httpStatusCode ?? 201;
     }
 }

@@ -3,9 +3,10 @@
 namespace ProcessWith;
 
 use Curl\Curl;
+use ProcessWith\Processors\Flutterwave;
+use ProcessWith\Processors\Paystack;
 use ProcessWith\Helpers\DoSomething;
-use ProcessWith\Processors\Paystack\Transaction as PaystackTranx;
-use ProcessWith\Processors\Flutterwave\Transaction as RaveTranx;
+use ProcessWith\Exceptions\PayException;
 
 /**
  * The ProcessWith class
@@ -57,7 +58,7 @@ class ProcessWith
 
         // if the Processor is not supported
         if( ! in_array($processor, $this->processors) ) {
-            die('Processor not supported');
+            throw new PayException('Gateway not supported');
         }
     }
 
@@ -68,6 +69,10 @@ class ProcessWith
      */
     public function setSecretKey(string $secretKey): void
     {
+        if (empty($secretKey)) {
+            throw new PayException('No secret key supplied');
+        }
+
         $this->secretKey = $secretKey;
     }
 
@@ -78,14 +83,18 @@ class ProcessWith
      */
     public function transaction(): ?object
     {
+        if (!$this->secretKey) {
+            throw new PayException('No secret key supplied');
+        }
+
         $transaction = null;
 
         switch(strtolower($this->processor)) {
             case 'paystack':
-                $transaction = new PaystackTranx($this->secretKey);
+                $transaction = new Paystack\Transaction($this->secretKey);
             break;
             case 'flutterwave':
-                $transaction = new RaveTranx($this->secretKey);
+                $transaction = new Flutterwave\Transaction($this->secretKey);
             break;
             default:
                 //$transaction = new Processwith\transaction($this->secretKey);

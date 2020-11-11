@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace ProcessWith\Processors\Paystack;
 
@@ -12,6 +12,13 @@ class Paystack extends Processor
      */
     protected $endpoints = [
         'transactions' => 'transaction'
+    ];
+
+    /**
+     * Paystack supported currencies
+     */
+    protected $currencies = [
+        'NGN', 'GHS', 'RND', 'USD'
     ];
 
     /**
@@ -48,4 +55,15 @@ class Paystack extends Processor
     {
         $this->response = $response;
     }
+
+    /**
+     * Set the default currency
+     * 
+     * @since 0.5
+     */
+    public function getCurrencies(): array
+    {
+        return $currencies;
+    }
+
 }
