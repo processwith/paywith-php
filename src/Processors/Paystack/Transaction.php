@@ -429,6 +429,10 @@ class Transaction extends Paystack
             throw new PayException('Transaction: No reference supplied');
         }
 
+        $this->setBody([
+            'reference' => $reference
+        ]);
+
         $request = $this->request;
         $request->get(sprintf('%s/verify/%s', $this->endpoint, $reference));
 
