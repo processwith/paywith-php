@@ -4,17 +4,18 @@ use ProcessWith\ProcessWith;
 require '../vendor/autoload.php';
 require 'config.php';
 
-$processwith = new ProcessWith('paystack');
-$processwith->setSecretKey( PSTK_SECRET_KEY );
+$processwith = new ProcessWith('flutterwave');
+$processwith->setSecretKey( RAVE_SECRET_KEY );
 
 $transaction = $processwith->transaction();
 
 $transaction->initialize([
     'amount'          => 1000,
-    'email'           => 'ikwuje@gmail.com',
-    'callback_url'    => 'http://localhost:3000/tests/verify.php',
+    'email'           => 'afuwapesunday12@gmail.com',
+    'callback_url'    => 'https://d47b4c1895d2.ngrok.io/tests/verify.php',
     'meta'            => [ 'consumer_id' => 23, 'consumer_mac' => '92a3-912ba-1192a' ],
 ]); 
+
 
 if( $transaction->status() ) {
     file_put_contents('ref.txt', $transaction->getReference());
@@ -22,5 +23,7 @@ if( $transaction->status() ) {
 }
 else {
     // beautiful error message display
-    die( $transaction->statusMessage() );
+    die( $transaction->getMessage());
 }
+
+?>

@@ -15,6 +15,13 @@ class Flutterwave extends Processor
     ];
 
     /**
+     * Flutterwave supported currencies
+     */
+    protected $currencies = [
+        'NGN', 'GHS', 'RND', 'USD'
+    ];
+
+    /**
      * Curl request
      * 
      * @var Curl
@@ -39,13 +46,33 @@ class Flutterwave extends Processor
         $this->request->setHeaders( $this->getHeaders() );
     }
 
+    /**
+     * set request with required headers
+     *
+     * @return void
+     */
     public function setHeaders(array $headers): void
     {
         $this->headers = $headers;
     }
 
+    /**
+     * set reponse object
+     *
+     * @return void
+     */
     public function setResponse(object $response): void
     {
         $this->response = $response;
+    }
+
+    /**
+     * Set the default currency
+     * 
+     * @since 0.5
+     */
+    public function getCurrencies(): array
+    {
+        return $currencies;
     }
 }
