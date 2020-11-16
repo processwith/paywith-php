@@ -333,7 +333,7 @@ class Transaction extends Paystack
      */
     public function initialize(array $body = []) : void
     {
-        if( array_key_exists('amount', $body) ) {
+        if(array_key_exists('amount', $body) ) {
             $this->setAmount($body['amount']);
         } 
         else {
@@ -357,13 +357,31 @@ class Transaction extends Paystack
             }
         }
 
+        if( array_key_exists('reference', $body) ) {
+            $this->setReference($body['reference']);
+        }
+        else {
+            if( !empty( $this->getReference() ) ) {
+                $body['reference'] = $this->getReference();
+            }
+        }
+
         if( array_key_exists('callback_url', $body) ) {
             $this->setRedirect($body['callback_url']);
-            $body['callback_url'] = $this->getRedirect();
         }
+        else {
+            if( !empty( $this->getRedirect() ) ) {
+                $body['callback_url'] = $this->getRedirect();
+            }
+        }
+
         if( array_key_exists('currency', $body) ) {
             $this->setCurrency($body['currency']);
-            $body['currency'] = $this->getCurrency();
+        }
+        else {
+            if( ! empty( $this->getCurrency() ) ) {
+                $body['currency'] = $this->getCurrency();
+            }
         }
 
         $this->setBody($body);
@@ -421,11 +439,11 @@ class Transaction extends Paystack
     {
         $this->status = false;
 
-        if(empty($reference)) {
+        if( empty($reference) ) {
             $reference = $this->reference ?? '';
         }
 
-        if(empty($reference)) {
+        if( empty($reference) ) {
             throw new PayException('Transaction: No reference supplied');
         }
 
@@ -434,9 +452,9 @@ class Transaction extends Paystack
         ]);
 
         $request = $this->request;
-        $request->get(sprintf('%s/verify/%s', $this->endpoint, $reference));
+        $request->get( sprintf('%s/verify/%s', $this->endpoint, $reference) );
 
-        if($request->error) {
+        if( $request->error ) {
             $this->httpStatusCode = $request->errorCode;
             $this->setMessage();
         }
@@ -449,7 +467,8 @@ class Transaction extends Paystack
 
             $this->httpStatusCode   = $request->getHttpStatusCode();
 
-            if('success' == $request->response->data->status) {
+            if( 'success' == $request->response->data->status )
+            {
                 $this->status = true;
             }
 

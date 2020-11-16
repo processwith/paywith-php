@@ -25,12 +25,12 @@ class Transaction extends Flutterwave
     protected $email;
 
     /**
-     * The payer info
+     * The customer info
      * 
      * @var array
      * @since 0.5
      */
-    protected $payer = [
+    protected $customer = [
         'name'  => null,
         'email' => null,
         'phone' => null
@@ -59,14 +59,6 @@ class Transaction extends Flutterwave
      * @since 0.5
      */
     protected $body;
-
-    /**
-     * request body nexted array value
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $customer;
 
     /**
      * The transacion endpoint
@@ -108,14 +100,6 @@ class Transaction extends Flutterwave
     protected $payment_option = 'card';
 
     /**
-     * local hash to check against event Hash
-     * 
-     * @var string
-     * @since 0.5
-     */
-    protected $webhookHash;
-
-    /**
      * Constructor
      * 
      * @since 0.5
@@ -136,29 +120,27 @@ class Transaction extends Flutterwave
         if (! DoSomething::goodEmail($email)) {
             throw new PayException('Transaction: Email is not valid');
         }
-        $this->payer['email'] = $email;
+        $this->customer['email'] = $email;
     }
 
     /**
-     * Set the Payer information
+     * Set the customer information
      * 
      * @since 0.5
      */
-    public function setPayer(array $payer): void
+    public function setCustomer(array $customer): void
     {
-        if (! array_key_exists('email', $payer)) {
-            throw Exception('Payer email is required');
+        if( isset($this->customer['email']) ) {
+            $this->customer['email'] = $customer['email'];
         }
-
-        $this->payer['email'] = $payer['email'];
-
-        if ( array_key_exists('name', $payer) ) {
-            $this->payer['name'] = $payer['name'];
+        else {
+            if( !$this->getEmail() ) {
+                throw Exception('customer email is required');
+            }
         }
-
-        if ( array_key_exists('phone', $payer) ) {
-            $this->payer['phone'] = $payer['phone'];
-        }
+        
+        $this->customer['phone'] = $customer['phone'] ?? null;
+        $this->customer['name'] = $customer['name'] ?? null;
     }
 
     /**
@@ -169,7 +151,7 @@ class Transaction extends Flutterwave
     public function setCurrency(string $currency): void
     {
         if (! in_array($currency, $this->currencies)) {
-            throw new PayException('Transaction: Currency not supported by Paystack');
+            throw new PayException('Transaction: Currency not supported by Flutterwave');
         }
 
         $this->currency = $currency;
@@ -255,7 +237,7 @@ class Transaction extends Flutterwave
      */
     public function getEmail(): string
     {
-        return ($this->payer['email'] ?? '');
+        return $this->customer['email'];
     }
 
     /**
@@ -273,9 +255,9 @@ class Transaction extends Flutterwave
      * 
      * @since 0.5
      */
-    public function getPayer(): array
+    public function getCustomer(): object
     {
-        return $this->payer;
+        return (object) $this->customer;
     }
 
     /**
@@ -329,89 +311,133 @@ class Transaction extends Flutterwave
     }
 
     /**
-     * Initialize a Paystack transaction
+     * Initialize a Flutterwave transaction
      * 
      * ---------------------------------------------------------------------
      * We make a request to the /transaction endpoint
      * a response will be returned:
      * {
      *      ...
-     *      "authorization_url": "https://checkout.paystack.com/0peioxfhpn",
-     *      "access_code": "0peioxfhpn",
-     *      "reference": "7PVGX8MEk85tgeEpVDtD"
+     
      * }
      * 
      * We then set this response body
      * 
      * @param $redirect if it set to true, we redirect to the PSTK checkout page
-     * @link https://paystack.com/docs/api/#transaction
+     * @link https://developer.flutterwave.com/docs/flutterwave-standard
      * @since 0.5
      */
     public function initialize(array $body = []) //: void
     {
-        
         if( array_key_exists('amount', $body) ) {
             $this->setAmount($body['amount']);
         } 
+        else if( $this->getAmount() == 0 ) {
+            throw new PayException('Transaction: Amount is required on Flutterwave');
+        }
         else {
-            if( $this->getAmount() == 0 ) {
-                throw new PayException('Amount is required for transaction');
+            $body['amount'] = $this->getAmount();
+        }
+
+        if ( isset($body['customer']) && is_array($body['customer']) ) {
+            $customer = $body['customer'];
+
+            if( isset($body['customer_email']) ) {
+                $this->setEmail( $body['customer_email'] );
+            } 
+            else if( !$this->getEmail() ) {
+                throw new PayException('Transaction: Customer email is required on Flutterwave');
             }
             else {
-                $body['amount'] = $this->getAmount();
+                $customer['email'] = $this->getEmail();
+            }
+               
+            if( array_key_exists('phonenumber', $customer) ) {
+                $this->customer['phone'] = $customer['phonenumber'];
+            }
+            else if ( $this->customer['phone'] ) {
+                $customer['phonenumber'] = $this->customer['phone'];
+            }
+
+            if( isset($customer['name']) ) {
+                $this->customer['name'] = $customer['name']; 
+            }
+            else if( !$this->customer['name'] ) {
+                $customer['name'] = $this->customer['name'];
+            }
+        }
+        else {
+            $customer = [];
+
+            if( array_key_exists('customer_email', $body) ) {
+                $this->setEmail($body['customer_email']);
+                $customer['email'] = $this->getEmail();
+            } 
+            else if( !$this->getEmail() ) {
+                throw new PayException('Transaction: Customer email is required on Flutterwave');
+            }
+            else {
+                $customer['email'] = $this->getEmail();
+            }
+
+            if( array_key_exists('customer_phone', $body) ) {
+                $customer['phonenumber'] = $body['customer_phone'];
+            }
+            else if ( $this->customer['phone'] ) {
+                $customer['phonenumber'] = $this->customer['phone'];
+            }
+
+            $name = sprintf(
+                '%s %s',
+                ($body['customer_firstname'] ?? ''),
+                ($body['customer_lastname'] ?? '')
+            ); // firstname lastname
+
+            if( !empty($name) ) {
+                $customer['name'] = $name;
+            }
+            else if( $this->customer['name'] ) {
+                $customer['name'] = $this->customer['name'];
             }
         }
 
+        $body['customer'] = $customer;
 
-        if( array_key_exists('email', $body) ) {
-            $this->setEmail($body['email']);
-            unset($body['email']);
-        } 
-        else {
-            throw new PayException('Email is required for transaction');
+        if( array_key_exists('redirect_url', $body) ) {
+            $this->setRedirect($body['redirect_url']);
         }
-
-        if( array_key_exists('callback_url', $body) ) {
-
-            // Reassign array with a new key
-            // unset the old array key
-            $this->setRedirect($body['redirect_url'] = $body['callback_url']);
+        else if( !empty( $this->getRedirect()) ) {
             $body['redirect_url'] = $this->getRedirect();
-
-            unset($body['callback_url']);
-            
         }
-
 
         if( array_key_exists('currency', $body) ) {
             $this->setCurrency($body['currency']);
+        }
+        else if( ! empty( $this->getCurrency()) ) {
             $body['currency'] = $this->getCurrency();
         }
+
+        if( array_key_exists('tx_ref', $body) ) {
+            $this->setReference($body['tx_ref']);
+        }
+        else if( !empty( $this->getReference()) ) {
+            $body['tx_ref'] = $this->getReference();
+        }
         else {
-            $body['currency'] = $this->currencies[0];
+            $body['tx_ref'] = bin2hex(random_bytes(7));
+            $this->setReference($body['tx_ref']);
         }
 
-
-        if( !$this->getPayer() ) {
-            $this->setPayer([ 'email' => $body['email'] ]);
-        }
-        else {
-            $body['customer'] = $this->getPayer();
+        if( array_key_exists('payment_options', $body) ) {
+            $this->setReference($body['payment_options']);
         }
 
-        $this->setReference( bin2hex(random_bytes(7)) );
-        $body['tx_ref'] = $this->getReference();
-
-        $body['payment_options'] = $this->payment_option;
-
-       
         $this->setBody($body);
 
         $request = $this->request;
         $request->post( sprintf('%s/payments', $this->getEndpoint()), $body );
-
         
-        if($request->error) {
+        if( $request->error ) {
             $this->httpStatusCode = $request->errorCode;
             $this->setMessage();
         }
@@ -435,7 +461,7 @@ class Transaction extends Flutterwave
 
 
     /**
-     * Redirect to paystack checkout page
+     * Redirect to Flutterwave checkout page
      * 
      * @since 0.5
      */
@@ -456,7 +482,7 @@ class Transaction extends Flutterwave
      * If the transaction status was successfull, we return TRUE
      * -----------------------------------------------------------
      * 
-     * @link https://paystack.com/docs/api/#transaction-verify
+     * @link https://developer.flutterwave.com/v2.0/docs/rave-standard
      * @since 0.5
      */
     public function verify(string $reference = ''): void
@@ -490,72 +516,58 @@ class Transaction extends Flutterwave
             $this->setEmail($request->response->data->customer->email);
 
             $this->httpStatusCode   = $request->getHttpStatusCode();
+            $this->setMessage($request->response->message);
 
-            if('success' == $request->response->data->status) {
+            if('successful' == $request->response->data->status) {
                 $this->status = true;
+                $this->setMessage($request->response->data->processor_response);
             }
-
-            $this->setMessage($request->response->data->processor_response);
         }
 
-    }
-
-
-    /**
-     * Set webhook hash to check against event hash
-     *
-     * @link 
-     * @since 0.5
-     */
-    public function webhookHash(string $hash) : void
-    {
-        $this->webhookHash = $hash;
     }
 
     /**
      * Handle webhook
      * 
-     * When a transaction is made on Paystack, paystack sends a payload of
+     * When a transaction is made on Flutterwave, Flutterwave sends a payload of
      * data to URL you specify on your dashboard.
      * 
      * This method handle the payload and return TRUE|FALSE for a 
      * valid or non valid transaction.
      * 
-     * @link https://paystack.com/docs/payments/webhooks/
+     * @link https://developer.flutterwave.com/reference#webhook
      * @since 0.5
      */
-    public function webhook()
+    public function webhook(string $secretHash = '') : void
     {
-
-        $checked = true; // default checked
-
-        // check if webhook has isset else throw exception
-        if( !isset($this->webhookHash) ) {
-            throw new PayException('webhook secret hash is not set');
-        }
-
         // Retrieve the request's body
         $body = @file_get_contents("php://input");
-
-        // confirm request method
-        if( (strtoupper($_SERVER['REQUEST_METHOD']) != 'POST' ) || !array_key_exists('HTTP_VERIF_HASH', $_SERVER) ) {
-
-            $checked = false;
-            $this->httpStatusCode = 400;
-            $this->message= 'Transaction: Invalid POST signature';
-        }
         
+        $checked = true; // default checked
+
+        // if the has was provided
+        if( empty($hashCode) )
+        {
+            throw new PayException('Secret hash is required. Check Settings/Webhook on your Flutterwave dashboard');
+            exit();
+        }
+
+        if( ! isset($_SERVER['REQUEST_METHOD']) || strtoupper($_SERVER['REQUEST_METHOD']) != 'POST' )
+        {
+            throw new PayException('Transaction: Invalid Flutterwave POST request');
+            exit();
+        }
+       
         // Retrieve event signature hash
         $eventHash = (isset($_SERVER['HTTP_VERIF_HASH']) ? $_SERVER['HTTP_VERIF_HASH'] : '');        
-        
+                
         // confirm the event's signature hash
-        if( $this->webhookHash !== $eventHash ) {
-
+        if( $secretHash !== $eventHash )
+        {
             $checked = false;
-            $this->httpStatusCode = 401;
-            $this->message = 'Transaction: Invalid event signature';
+            $this->httpStatusCode = 400;
+            $this->message = 'Transaction: Invalid Flutterwave signature';
         }
-        
 
         if($checked)
         {
@@ -563,24 +575,21 @@ class Transaction extends Flutterwave
             $this->httpStatusCode = 200;
             $this->setRawResponse($body);
 
-            $event = json_decode($body);
+            $response = json_decode($body);
 
-            if ('charge.completed' == ($event->event ?? '') ) {
-                $this->setAmount($event->data->amount);
-                $this->setEmail($event->data->customer->email);
-                $this->setReference($event->data->tx_ref);
-                $this->setResponse($event);
-                $this->setMessage($event->data->processor_response);
+            $this->setAmount($response->data->amount);
+            $this->setEmail($response->data->customer->email);
+            $this->setCurrency($response->data->currency);
+            $this->setReference($response->data->txRef);
+            $this->setResponse($response);
 
-                if ('successful' == $event->data->status) {
-                    $this->status = true;
-                }
+            if( 'successful' == $response->data->status ) {
+                $this->status = true;
+                $this->setMessage('Transaction: Charge was completed', 200);
             }
             else {
-                $this->message = 'Transaction: Flutterwave charge.failed';
+                $this->setMessage('Transaction: Charge ' . $response->data->status);
             }
-
         }      
-        
     }
 }
