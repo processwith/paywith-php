@@ -1,4 +1,5 @@
-![paywith repo image](image_name.png "Image Title")
+![paywith repo image](https://raw.githubusercontent.com/processwith/processwith-assets/main/paywith-repo-featured%20image.png "Featured")
+
 # PayWith PHP
 
 [![](https://img.shields.io/github/release/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/releases/)
