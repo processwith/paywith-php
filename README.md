@@ -1,7 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/processwith/processwith-assets/main/paywith-repo-featured%20image.png" alt="paywith repo image">
   <h1 align="center">Paywith</h1>
-  <br><br>
 </p>
 
 [![](https://img.shields.io/github/release/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/releases/)
@@ -27,11 +26,8 @@ use ProcessWith\PayWith;
 $paywith = new PayWith('Paystack', 'Your Paystack Secret');
 $transaction->initialize([
     'amount' => 5000,
-    'customer' => [
-        'email'  => 'jeremiahsucceed@gmail.com',
-        'name'  => 'Ade Kolawole'
-    ],
-    'redirect_url' => 'http://localhost:3000/tests/verify.php',
+    'email'  => 'jeremiahsucceed@gmail.com',
+    'callback_url' => 'http://localhost:3000/tests/verify',
     'currency' => 'NGN'
 ]);
 
