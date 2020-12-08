@@ -1,6 +1,7 @@
-![paywith repo image](https://raw.githubusercontent.com/processwith/processwith-assets/main/paywith-repo-featured%20image.png "Featured")
-
-# PayWith PHP
+<p align="center">
+  <img src="https://raw.githubusercontent.com/processwith/processwith-assets/main/paywith-repo-featured%20image.png" alt="paywith repo image">
+  <h1>Paywith</h1>
+</p>
 
 [![](https://img.shields.io/github/release/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/releases/)
 [![](https://img.shields.io/github/license/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/blob/master/LICENSE)
