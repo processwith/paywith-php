@@ -6,7 +6,7 @@
 [![](https://img.shields.io/github/license/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/blob/master/LICENSE)
 [![](https://img.shields.io/travis/processwith/paywith-php.svg)](https://travis-ci.com/github/processwith/paywith-php/)
 
-PayWith-PHP makes it easy to use multiple payment gateways in your PHP application.
+Paywith makes it easy to use multiple payment gateways in your PHP application.
 
 ## Installation
 
@@ -20,62 +20,62 @@ composer require processwith/paywith-php
 
 ### basic transaction
 ``` php
-    use ProcessWith\PayWith;
+use ProcessWith\PayWith;
 
-    $paywith = new PayWith('Paystack', 'Your Paystack Secret');
-    $transaction->initialize([
-        'amount' => 5000,
-        'customer' => [
-            'email'  => 'jeremiahsucceed@gmail.com',
-            'name'  => 'Ade Kolawole'
-        ],
-        'redirect_url' => 'http://localhost:3000/tests/verify.php',
-        'currency' => 'NGN'
-    ]);
+$paywith = new PayWith('Paystack', 'Your Paystack Secret');
+$transaction->initialize([
+    'amount' => 5000,
+    'customer' => [
+        'email'  => 'jeremiahsucceed@gmail.com',
+        'name'  => 'Ade Kolawole'
+    ],
+    'redirect_url' => 'http://localhost:3000/tests/verify.php',
+    'currency' => 'NGN'
+]);
 
-    $transaction->checkout(); // redirect to checkout page
+$transaction->checkout(); // redirect to checkout page
 ```
 Love more examples, see the example page.
 
 ### verify a transaction
 ``` php
-    // Paywith must have be initialize with Paystack or Flutterwave 
-    $transaction = $paywith->transaction();
-    $transaction->verify( $_GET['reference'] );
+// Paywith must have be initialize with Paystack or Flutterwave 
+$transaction = $paywith->transaction();
+$transaction->verify( $_GET['reference'] );
 
-    if( $transaction->status() )
+if( $transaction->status() )
+{
+    // check the email and the amount
+    // before giving value
+    $amount = 5000;
+    $email  = 'jeremiah@gmail.com';
+
+    if ( $amount == $transaction->getAmount() && $email == $transaction->getEmail() )
     {
-        // check the email and the amount
-        // before giving value
-        $amount = 5000;
-        $email  = 'jeremiah@gmail.com';
-
-        if ( $amount == $transaction->getAmount() && $email == $transaction->getEmail() )
-        {
-            // give value
-            // echo 'thanks for making payment';
-        }
+        // give value
+        // echo 'thanks for making payment';
     }
+}
 ```
 
 ### webhook
 ``` php
-    // Paywith must have be initialize with Paystack or Flutterwave 
-    $transaction    = $paywith->transaction();
-    $transaction->webhook();
+// Paywith must have be initialize with Paystack or Flutterwave 
+$transaction    = $paywith->transaction();
+$transaction->webhook();
 
-    if( $transaction->status() )
+if( $transaction->status() )
+{
+    // check the email and the amount
+    // before giving value
+    $amount = 5000;
+    $email  = 'jeremiah@gmail.com';
+    if ( $amount == $transaction->getAmount() && $email == $transaction->getEmail() )
     {
-        // check the email and the amount
-        // before giving value
-        $amount = 5000;
-        $email  = 'jeremiah@gmail.com';
-        if ( $amount == $transaction->getAmount() && $email == $transaction->getEmail() )
-        {
-            // give value
-            // echo 'thanks for making payment';
-        }
+        // give value
+        // echo 'thanks for making payment';
     }
+}
 ```
 
 ### Tutorials
