@@ -1,21 +1,21 @@
 <?php
 
-namespace ProcessWith;
+namespace Paywith;
 
 use Curl\Curl;
-use ProcessWith\Processors\Flutterwave;
-use ProcessWith\Processors\Paystack;
-use ProcessWith\Helpers\DoSomething;
-use ProcessWith\Exceptions\PayException;
+use Paywith\Processors\Flutterwave;
+use Paywith\Processors\Paystack;
+use Paywith\Helpers\DoSomething;
+use Paywith\Exceptions\PayException;
 
 /**
- * The ProcessWith class
+ * The Paywith class
  * 
- * @author ProcessWith
- * @link https://www.processwith.com
+ * @author PayWith
+ * @link https://www.Paywith.com
  * @version 0.5
  */
-class ProcessWith
+class PayWith
 {
     /**
      *  List of supported payment gateways
@@ -97,7 +97,7 @@ class ProcessWith
                 $transaction = new Flutterwave\Transaction($this->secretKey);
             break;
             default:
-                //$transaction = new Processwith\transaction($this->secretKey);
+                //$transaction = new Paywith\transaction($this->secretKey);
         }
 
         return $transaction;

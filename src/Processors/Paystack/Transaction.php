@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ProcessWith\Processors\Paystack;
+namespace Paywith\Processors\Paystack;
 
-use ProcessWith\Helpers\DoSomething;
-use ProcessWith\Exceptions\PayException;
-use ProcessWith\Processors\Paystack\Paystack;
+use Paywith\Helpers\DoSomething;
+use Paywith\Exceptions\PayException;
+use Paywith\Processors\Paystack\Paystack;
 
 class Transaction extends Paystack
 {

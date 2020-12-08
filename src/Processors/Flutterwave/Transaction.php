@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace ProcessWith\Processors\Flutterwave;
+namespace Paywith\Processors\Flutterwave;
 
-use ProcessWith\Helpers\DoSomething;
-use ProcessWith\Exceptions\PayException;
-use ProcessWith\Processors\Flutterwave\Flutterwave;
+use Paywith\Helpers\DoSomething;
+use Paywith\Exceptions\PayException;
+use Paywith\Processors\Flutterwave\Flutterwave;
 
 class Transaction extends Flutterwave
 {

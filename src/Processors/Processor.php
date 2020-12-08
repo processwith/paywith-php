@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace ProcessWith\Processors;
+namespace Paywith\Processors;
 
-use ProcessWith\Helpers\DoSomething;
+use Paywith\Helpers\DoSomething;
 
 /**
  * The blueprint class of any payment processor that is supported
  * 
- * @package ProcessWith
+ * @package Paywith
  * @subpackage Processor
- * @author ProcessWith
+ * @author Paywith
  * @since 0.5
  */
 abstract class Processor

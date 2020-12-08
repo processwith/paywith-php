@@ -1,6 +1,6 @@
 <?php
 
-namespace ProcessWith\Exceptions;
+namespace Paywith\Exceptions;
 
 class Exceptions
 {

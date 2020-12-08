@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace ProcessWith\Processors\Flutterwave;
+namespace Paywith\Processors\Flutterwave;
 
 use Curl\Curl;
-use ProcessWith\Processors\Processor;
+use Paywith\Processors\Processor;
 
 class Flutterwave extends Processor
 {

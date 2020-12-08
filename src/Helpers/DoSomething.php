@@ -1,5 +1,5 @@
 <?php
-namespace ProcessWith\Helpers;
+namespace Paywith\Helpers;
 
 final class DoSomething
 {

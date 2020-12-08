@@ -1,14 +1,21 @@
 {
     "name": "processwith/paywith-php",
     "description": "Easy multiple payments integration for PHP applications",
-    "keywords": ["processwith", "paystack", "flutterwave", "rave", "paychant"],
-    "homepage": "https://github.com/processwith/processwith-php",
+    "keywords": [
+        "processwith",
+        "paywith",
+        "paystack",
+        "flutterwave",
+        "rave",
+        "paychant"
+    ],
+    "homepage": "https://github.com/processwith/paywith-php",
     "license": "MIT",
     "type": "library",
     "authors": [
         {
             "name": "ProcessWith API Team",
-            "email": "hello@processwith.com"
+            "email": "hello@Processwith.com"
         }
     ],
     "require": {
@@ -20,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ProcessWith\\": "src"
+            "Paywith\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ProcessWith\\Tests\\": "tests"
+            "Paywith\\Tests\\": "tests"
         }
     },
     "scripts": {
