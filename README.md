@@ -1,6 +1,7 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/processwith/processwith-assets/main/paywith-repo-featured%20image.png" alt="paywith repo image">
   <h1 align="center">Paywith</h1>
+  
 </p>
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/processwith/paywith.svg?style=flat-square)](https://packagist.org/packages/processwith/paywith)
