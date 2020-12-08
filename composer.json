@@ -1,7 +1,7 @@
 {
-    "name": "processwith/processwith-php",
-    "description": "Easily switch from paystack to flutterwave(vice versa) in your PHP applications.",
-    "keywords": ["processwith", "paystack", "flutterwave", "rave", "paylink", "monnify"],
+    "name": "processwith/paywith-php",
+    "description": "Easy multiple payments integration for PHP applications",
+    "keywords": ["processwith", "paystack", "flutterwave", "rave", "paychant"],
     "homepage": "https://github.com/processwith/processwith-php",
     "license": "MIT",
     "type": "library",

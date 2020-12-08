@@ -3,7 +3,7 @@
   <h1 align="center">Paywith</h1>
 </p>
 
-[![](https://img.shields.io/github/release/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/releases/)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/processwith/paywith.svg?style=flat-square)](https://packagist.org/packages/processwith/botman)
 [![](https://img.shields.io/github/license/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/blob/master/LICENSE)
 [![](https://img.shields.io/travis/processwith/paywith-php.svg)](https://travis-ci.com/github/processwith/paywith-php/)
 
