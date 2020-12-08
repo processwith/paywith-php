@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/processwith/processwith-assets/main/paywith-repo-featured%20image.png" alt="paywith repo image">
-  <h1>Paywith</h1>
+  <h1 align="center">Paywith</h1>
 </p>
 
 [![](https://img.shields.io/github/release/processwith/paywith-php.svg)](https://github.com/processwith/paywith-php/releases/)
