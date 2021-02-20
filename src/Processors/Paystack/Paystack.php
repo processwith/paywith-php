@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 
-namespace Paywith\Processors\Paystack;
+namespace PayWith\Processors\Paystack;
 
 use Curl\Curl;
-use Paywith\Processors\Processor;
+use PayWith\Processors\Processor;
 
 class Paystack extends Processor
 {

@@ -14,8 +14,8 @@
     "type": "library",
     "authors": [
         {
-            "name": "ProcessWith API Team",
-            "email": "hello@Processwith.com"
+            "name": "ProcessWith Wallet Team",
+            "email": "hello@processwith.com"
         }
     ],
     "require": {
@@ -27,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Paywith\\": "src"
+            "PayWith\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Paywith\\Tests\\": "tests"
+            "PayWith\\Tests\\": "tests"
         }
     },
     "scripts": {

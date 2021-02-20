@@ -1,15 +1,15 @@
 <?php declare(strict_types=1);
 
-namespace Paywith\Processors;
+namespace PayWith\Processors;
 
-use Paywith\Helpers\DoSomething;
+use PayWith\Helpers\DoSomething;
 
 /**
  * The blueprint class of any payment processor that is supported
  * 
- * @package Paywith
+ * @package PayWith
  * @subpackage Processor
- * @author Paywith
+ * @author PayWith
  * @since 0.5
  */
 abstract class Processor
@@ -45,6 +45,13 @@ abstract class Processor
      * @since 0.5
      */
     protected $headers;
+
+    /**
+     * Curl request
+     * 
+     * @var Curl
+     */
+    protected $request;
 
     /**
      * The response body per request sent

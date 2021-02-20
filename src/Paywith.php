@@ -1,18 +1,17 @@
 <?php
-
-namespace Paywith;
+namespace PayWith;
 
 use Curl\Curl;
-use Paywith\Processors\Flutterwave;
-use Paywith\Processors\Paystack;
-use Paywith\Helpers\DoSomething;
-use Paywith\Exceptions\PayException;
+use PayWith\Processors\Flutterwave;
+use PayWith\Processors\Paystack;
+use PayWith\Helpers\DoSomething;
+use PayWith\Exceptions\PayException;
 
 /**
- * The Paywith class
+ * The PayWith class
  * 
  * @author PayWith
- * @link https://www.Paywith.com
+ * @link https://www.PayWith.com
  * @version 0.5
  */
 class PayWith
@@ -97,7 +96,7 @@ class PayWith
                 $transaction = new Flutterwave\Transaction($this->secretKey);
             break;
             default:
-                //$transaction = new Paywith\transaction($this->secretKey);
+                //$transaction = new PayWith\transaction($this->secretKey);
         }
 
         return $transaction;

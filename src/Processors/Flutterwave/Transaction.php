@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Paywith\Processors\Flutterwave;
+namespace PayWith\Processors\Flutterwave;
 
-use Paywith\Helpers\DoSomething;
-use Paywith\Exceptions\PayException;
-use Paywith\Processors\Flutterwave\Flutterwave;
+use PayWith\Helpers\DoSomething;
+use PayWith\Exceptions\PayException;
+use PayWith\Processors\Flutterwave\Flutterwave;
 
 class Transaction extends Flutterwave
 {
@@ -14,43 +14,7 @@ class Transaction extends Flutterwave
      * @var float
      * @since 0.5
      */
-    protected $amount = 0;
-
-    /**
-     * The `email` of the transaction
-     * 
-     * @var string
-     * @since 0.5
-     */
-    protected $email;
-
-    /**
-     * The customer info
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $customer = [
-        'name'  => null,
-        'email' => null,
-        'phone' => null
-    ];
-
-    /**
-     * meta of the transaction
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $meta = [];
-
-    /**
-     * The `reference` of the transaction
-     * 
-     * @var string
-     * @since 0.5
-     */
-    protected $reference;
+    protected $amount = 1;
 
     /**
      * The request body of a transaction
@@ -69,11 +33,12 @@ class Transaction extends Flutterwave
     protected $endpoint;
 
     /**
-     * The redirect url
+     * Transaction dafault currency 
      * 
-     * @var string
+     * @var array
+     * @since 0.5
      */
-    protected $redirect_url;
+    protected $currency = 'NGN';
 
     /**
      * Checkout url
@@ -84,20 +49,12 @@ class Transaction extends Flutterwave
     protected $checkout_url;
 
     /**
-     * Transaction dafault currency 
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $currency = 'NGN';
-
-    /**
      * Fallback if payment option not set
      * 
      * @var string
      * @since 0.5
      */
-    protected $payment_option = 'card';
+    protected $payment_option = 'card, ussd, banktransfer';
 
     /**
      * Constructor
@@ -108,63 +65,6 @@ class Transaction extends Flutterwave
     {
         parent::__construct($secretKey);
         $this->endpoint = sprintf('%s/%s', $this->URL, $this->endpoints['payments'] );
-    }
-
-    public function setAmount(float $amount): void
-    {
-        $this->amount = $amount;
-    }
-
-    public function setEmail(string $email): void
-    {
-        if (! DoSomething::goodEmail($email)) {
-            throw new PayException('Transaction: Email is not valid');
-        }
-        $this->customer['email'] = $email;
-    }
-
-    /**
-     * Set the customer information
-     * 
-     * @since 0.5
-     */
-    public function setCustomer(array $customer): void
-    {
-        if( isset($this->customer['email']) ) {
-            $this->customer['email'] = $customer['email'];
-        }
-        else {
-            if( !$this->getEmail() ) {
-                throw Exception('customer email is required');
-            }
-        }
-        
-        $this->customer['phone'] = $customer['phone'] ?? null;
-        $this->customer['name'] = $customer['name'] ?? null;
-    }
-
-    /**
-     * Set the transaction currency
-     * 
-     * @since 0.5
-     */
-    public function setCurrency(string $currency): void
-    {
-        if (! in_array($currency, $this->currencies)) {
-            throw new PayException('Transaction: Currency not supported by Flutterwave');
-        }
-
-        $this->currency = $currency;
-    }
-
-    /**
-     * Set the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function setReference(string $reference): void
-    {
-        $this->reference = $reference;
     }
 
     /**
@@ -178,35 +78,6 @@ class Transaction extends Flutterwave
     }
 
     /**
-     * Set the checkout url
-     * @since 0.5
-     */
-    public function setCheckout(string $checkout_url): void
-    {
-        if(DoSomething::goodURL($checkout_url)) {
-            $this->checkout_url = $checkout_url;
-        }
-        else {
-            throw new PayException('Transaction: Checkout URL not valid');
-        }
-    }
-
-    /**
-     * Set the redirect url
-     * 
-     * @since 0.5
-     */
-    public function setRedirect(string $redirect_url): void
-    {
-        if(DoSomething::goodURL($redirect_url)) {
-            $this->redirect_url = $redirect_url;
-        }
-        else {
-            throw new PayException('Transaction: Redirect URL not valid');
-        }
-    }
-
-    /**
      * Set the transaction request body
      * 
      * @since 0.5
@@ -214,30 +85,6 @@ class Transaction extends Flutterwave
     public function setBody(array $body): void
     {
         $this->body = $body;
-    }
-
-    /**
-     * Get the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getAmount(): float
-    {
-        if(!$this->amount) {
-            return 0.0;
-        }
-
-        return (float) $this->amount;
-    }
-
-    /**
-     * Get the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getEmail(): string
-    {
-        return $this->customer['email'];
     }
 
     /**
@@ -251,16 +98,6 @@ class Transaction extends Flutterwave
     }
 
     /**
-     * Get the object of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getCustomer(): object
-    {
-        return (object) $this->customer;
-    }
-
-    /**
      * Get the body of the transaction
      * 
      * @since 0.5
@@ -268,46 +105,6 @@ class Transaction extends Flutterwave
     public function getBody(): object
     {
         return (object) $this->body;
-    }
-
-    /**
-     * Get the currency of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getCurrency(): string
-    {
-        return $this->currency;
-    }
-
-    /**
-     * Get the checkout_url
-     * 
-     * @since 0.5
-     */
-    public function getCheckout(): string
-    {
-        return ($this->checkout_url ?? '');
-    }
-
-    /**
-     * Get the redirect_url
-     * 
-     * @since 0.5
-     */
-    public function getRedirect(): string
-    {
-        return ($this->redirect_url ?? '');
-    }
-
-    /**
-     * Get the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getReference(): string
-    {
-        return $this->reference ?? '';
     }
 
     /**
@@ -329,107 +126,20 @@ class Transaction extends Flutterwave
      */
     public function initialize(array $body = []) //: void
     {
-        if( array_key_exists('amount', $body) ) {
-            $this->setAmount($body['amount']);
-        } 
-        else if( $this->getAmount() == 0 ) {
+        if( ! array_key_exists('amount', $body) ) {
             throw new PayException('Transaction: Amount is required on Flutterwave');
         }
-        else {
-            $body['amount'] = $this->getAmount();
+
+        if ( ! isset($body['customer']['email']) ) {
+            throw new PayException('Transaction: Customer email is required on Flutterwave');
         }
 
-        if ( isset($body['customer']) && is_array($body['customer']) ) {
-            $customer = $body['customer'];
-
-            if( isset($body['customer_email']) ) {
-                $this->setEmail( $body['customer_email'] );
-            } 
-            else if( !$this->getEmail() ) {
-                throw new PayException('Transaction: Customer email is required on Flutterwave');
-            }
-            else {
-                $customer['email'] = $this->getEmail();
-            }
-               
-            if( array_key_exists('phonenumber', $customer) ) {
-                $this->customer['phone'] = $customer['phonenumber'];
-            }
-            else if ( $this->customer['phone'] ) {
-                $customer['phonenumber'] = $this->customer['phone'];
-            }
-
-            if( isset($customer['name']) ) {
-                $this->customer['name'] = $customer['name']; 
-            }
-            else if( !$this->customer['name'] ) {
-                $customer['name'] = $this->customer['name'];
-            }
-        }
-        else {
-            $customer = [];
-
-            if( array_key_exists('customer_email', $body) ) {
-                $this->setEmail($body['customer_email']);
-                $customer['email'] = $this->getEmail();
-            } 
-            else if( !$this->getEmail() ) {
-                throw new PayException('Transaction: Customer email is required on Flutterwave');
-            }
-            else {
-                $customer['email'] = $this->getEmail();
-            }
-
-            if( array_key_exists('customer_phone', $body) ) {
-                $customer['phonenumber'] = $body['customer_phone'];
-            }
-            else if ( $this->customer['phone'] ) {
-                $customer['phonenumber'] = $this->customer['phone'];
-            }
-
-            $name = sprintf(
-                '%s %s',
-                ($body['customer_firstname'] ?? ''),
-                ($body['customer_lastname'] ?? '')
-            ); // firstname lastname
-
-            if( !empty($name) ) {
-                $customer['name'] = $name;
-            }
-            else if( $this->customer['name'] ) {
-                $customer['name'] = $this->customer['name'];
-            }
-        }
-
-        $body['customer'] = $customer;
-
-        if( array_key_exists('redirect_url', $body) ) {
-            $this->setRedirect($body['redirect_url']);
-        }
-        else if( !empty( $this->getRedirect()) ) {
-            $body['redirect_url'] = $this->getRedirect();
-        }
-
-        if( array_key_exists('currency', $body) ) {
-            $this->setCurrency($body['currency']);
-        }
-        else if( ! empty( $this->getCurrency()) ) {
-            $body['currency'] = $this->getCurrency();
-        }
-
-        if( array_key_exists('tx_ref', $body) ) {
-            $this->setReference($body['tx_ref']);
-        }
-        else if( !empty( $this->getReference()) ) {
-            $body['tx_ref'] = $this->getReference();
-        }
-        else {
+        if( ! array_key_exists('tx_ref', $body) ) {
             $body['tx_ref'] = bin2hex(random_bytes(7));
-            $this->setReference($body['tx_ref']);
         }
 
-        if( array_key_exists('payment_options', $body) ) {
-            $this->setReference($body['payment_options']);
+        if( ! array_key_exists('payment_options', $body) ) {
+            $body['payment_options'] = $this->payment_option;
         }
 
         $this->setBody($body);
@@ -449,14 +159,11 @@ class Transaction extends Flutterwave
 
             if ('success' == $request->response->status) {
                 $this->status = true;
-
-                $this->setReference( $this->getReference() );
-                $this->setCheckout($request->response->data->link);
+                $this->checkout_url = $request->response->data->link;
             }
 
             $this->setMessage($request->response->message);
         }       
-
     }
 
 
@@ -485,13 +192,9 @@ class Transaction extends Flutterwave
      * @link https://developer.flutterwave.com/v2.0/docs/rave-standard
      * @since 0.5
      */
-    public function verify(string $reference = ''): void
+    public function verify(string $reference): void
     {
         $this->status = false;
-
-        if(empty($reference)) {
-            $reference = $this->reference ?? '';
-        }
 
         if(empty($reference)) {
             throw new PayException('Transaction: No reference supplied');
@@ -511,9 +214,8 @@ class Transaction extends Flutterwave
         else {
             $this->setResponse($request->response);
             $this->setRawResponse($request->getRawResponse());
-            $this->setReference($request->response->data->tx_ref);
-            $this->setAmount($request->response->data->amount);
-            $this->setEmail($request->response->data->customer->email);
+
+            $this->amount = $request->response->data->amount;
 
             $this->httpStatusCode   = $request->getHttpStatusCode();
             $this->setMessage($request->response->message);
@@ -577,10 +279,7 @@ class Transaction extends Flutterwave
 
             $response = json_decode($body);
 
-            $this->setAmount($response->data->amount);
-            $this->setEmail($response->data->customer->email);
-            $this->setCurrency($response->data->currency);
-            $this->setReference($response->data->txRef);
+            $this->amount = $response->data->amount;
             $this->setResponse($response);
 
             if( 'successful' == $response->data->status ) {

@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace Paywith\Processors\Paystack;
+namespace PayWith\Processors\Paystack;
 
-use Paywith\Helpers\DoSomething;
-use Paywith\Exceptions\PayException;
-use Paywith\Processors\Paystack\Paystack;
+use PayWith\Helpers\DoSomething;
+use PayWith\Exceptions\PayException;
+use PayWith\Processors\Paystack\Paystack;
 
 class Transaction extends Paystack
 {
@@ -14,43 +14,7 @@ class Transaction extends Paystack
      * @var float
      * @since 0.5
      */
-    protected $amount = 0;
-
-    /**
-     * The `email` of the transaction
-     * 
-     * @var string
-     * @since 0.5
-     */
-    protected $email;
-
-    /**
-     * The payer info
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $payer = [
-        'name'  => null,
-        'email' => null,
-        'phone' => null
-    ];
-
-    /**
-     * meta of the transaction
-     * 
-     * @var array
-     * @since 0.5
-     */
-    protected $meta = [];
-
-    /**
-     * The `reference` of the transaction
-     * 
-     * @var string
-     * @since 0.5
-     */
-    protected $reference;
+    protected $amount = 1;
 
     /**
      * The request body of a transaction
@@ -67,13 +31,6 @@ class Transaction extends Paystack
      * @since 0.5
      */
     protected $endpoint;
-
-    /**
-     * The redirect url
-     * 
-     * @var string
-     */
-    protected $redirect_url;
 
     /**
      * Checkout url
@@ -110,65 +67,6 @@ class Transaction extends Paystack
         $this->endpoint = sprintf('%s/%s', $this->URL, $this->endpoints['transactions'] );
     }
 
-    public function setAmount(float $amount): void
-    {
-        $this->amount = $amount;
-    }
-
-    public function setEmail(string $email): void
-    {
-        if (! DoSomething::goodEmail($email)) {
-            throw new PayException('Transaction: Email is not valid');
-        }
-        $this->payer['email'] = $email;
-    }
-
-    /**
-     * Set the Payer information
-     * 
-     * @since 0.5
-     */
-    public function setPayer(array $payer): void
-    {
-        if (! array_key_exists('email', $payer)) {
-            throw Exception('Payer email is required');
-        }
-
-        $this->payer['email'] = $payer['email'];
-
-        if ( array_key_exists('name', $payer) ) {
-            $this->payer['name'] = $payer['name'];
-        }
-
-        if ( array_key_exists('phone', $payer) ) {
-            $this->payer['phone'] = $payer['phone'];
-        }
-    }
-
-    /**
-     * Set the transaction currency
-     * 
-     * @since 0.5
-     */
-    public function setCurrency(string $currency): void
-    {
-        if (! in_array($currency, $this->currencies)) {
-            throw new PayException('Transaction: Currency not supported by Paystack');
-        }
-
-        $this->currency = $currency;
-    }
-
-    /**
-     * Set the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function setReference(string $reference): void
-    {
-        $this->reference = $reference;
-    }
-
     /**
      * Set a transaction request endpoint
      * 
@@ -177,35 +75,6 @@ class Transaction extends Paystack
     public function setEndpoint(string $endpoint): void
     {
         $this->endpoint = $endpoint;
-    }
-
-    /**
-     * Set the checkout url
-     * @since 0.5
-     */
-    public function setCheckout(string $checkout_url): void
-    {
-        if(DoSomething::goodURL($checkout_url)) {
-            $this->checkout_url = $checkout_url;
-        }
-        else {
-            throw new PayException('Transaction: Checkout URL not valid');
-        }
-    }
-
-    /**
-     * Set the redirect url
-     * 
-     * @since 0.5
-     */
-    public function setRedirect(string $redirect_url): void
-    {
-        if(DoSomething::goodURL($redirect_url)) {
-            $this->redirect_url = $redirect_url;
-        }
-        else {
-            throw new PayException('Transaction: Redirect URL not valid');
-        }
     }
 
     /**
@@ -219,30 +88,6 @@ class Transaction extends Paystack
     }
 
     /**
-     * Get the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getAmount(): float
-    {
-        if(!$this->amount) {
-            return 0.0;
-        }
-
-        return (float) $this->amount;
-    }
-
-    /**
-     * Get the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getEmail(): string
-    {
-        return ($this->payer['email'] ?? '');
-    }
-
-    /**
      * Get the endpoint of the transaction
      * 
      * @since 0.5
@@ -253,16 +98,6 @@ class Transaction extends Paystack
     }
 
     /**
-     * Get the object of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getPayer(): object
-    {
-        return (object) $this->payer;
-    }
-
-    /**
      * Get the body of the transaction
      * 
      * @since 0.5
@@ -270,46 +105,6 @@ class Transaction extends Paystack
     public function getBody(): object
     {
         return (object) $this->body;
-    }
-
-    /**
-     * Get the currency of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getCurrency(): string
-    {
-        return $this->currency;
-    }
-
-    /**
-     * Get the checkout_url
-     * 
-     * @since 0.5
-     */
-    public function getCheckout(): string
-    {
-        return ($this->checkout_url ?? '');
-    }
-
-    /**
-     * Get the redirect_url
-     * 
-     * @since 0.5
-     */
-    public function getRedirect(): string
-    {
-        return ($this->redirect_url ?? '');
-    }
-
-    /**
-     * Get the reference of the transaction
-     * 
-     * @since 0.5
-     */
-    public function getReference(): string
-    {
-        return ($this->reference ?? '');
     }
 
     /**
@@ -333,56 +128,13 @@ class Transaction extends Paystack
      */
     public function initialize(array $body = []) : void
     {
-        if(array_key_exists('amount', $body) ) {
-            $this->setAmount($body['amount']);
+        if( ! array_key_exists('amount', $body) ) {
+            throw new PayException('Amount is required for transaction');
         } 
-        else {
-            if( $this->getAmount() == 0 ) {
-                throw new PayException('Amount is required for transaction');
-            }
-            else {
-                $body['amount'] = $this->getAmount();
-            }
-        }
 
-        if( array_key_exists('email', $body) ) {
-            $this->setEmail($body['email']);
+        if( ! array_key_exists('email', $body) ) {
+            throw new PayException('Email is required for transaction');
         } 
-        else {
-            if( !$this->getEmail() ) {
-                throw new PayException('Email is required for transaction');
-            }
-            else {
-                $body['email'] = $this->getEmail();
-            }
-        }
-
-        if( array_key_exists('reference', $body) ) {
-            $this->setReference($body['reference']);
-        }
-        else {
-            if( !empty( $this->getReference() ) ) {
-                $body['reference'] = $this->getReference();
-            }
-        }
-
-        if( array_key_exists('callback_url', $body) ) {
-            $this->setRedirect($body['callback_url']);
-        }
-        else {
-            if( !empty( $this->getRedirect() ) ) {
-                $body['callback_url'] = $this->getRedirect();
-            }
-        }
-
-        if( array_key_exists('currency', $body) ) {
-            $this->setCurrency($body['currency']);
-        }
-        else {
-            if( ! empty( $this->getCurrency() ) ) {
-                $body['currency'] = $this->getCurrency();
-            }
-        }
 
         $this->setBody($body);
 
@@ -401,9 +153,7 @@ class Transaction extends Paystack
 
             if (true == $request->response->status) {
                 $this->status = true;
-
-                $this->setReference($request->response->data->reference);
-                $this->setCheckout($request->response->data->authorization_url);
+                $this->checkout_url = $request->response->data->authorization_url;
             }
 
             $this->setMessage($request->response->message);
@@ -435,13 +185,9 @@ class Transaction extends Paystack
      * @link https://paystack.com/docs/api/#transaction-verify
      * @since 0.5
      */
-    public function verify(string $reference = ''): void
+    public function verify(string $reference): void
     {
         $this->status = false;
-
-        if( empty($reference) ) {
-            $reference = $this->reference ?? '';
-        }
 
         if( empty($reference) ) {
             throw new PayException('Transaction: No reference supplied');
@@ -461,10 +207,8 @@ class Transaction extends Paystack
         else {
             $this->setResponse($request->response);
             $this->setRawResponse($request->getRawResponse());
-            $this->setReference($request->response->data->reference);
-            $this->setAmount($request->response->data->amount);
-            $this->setEmail($request->response->data->customer->email);
 
+            $this->amount = $request->response->data->amount;
             $this->httpStatusCode   = $request->getHttpStatusCode();
 
             if( 'success' == $request->response->data->status )
@@ -525,9 +269,7 @@ class Transaction extends Paystack
                 $event = json_decode($input);
 
                 if ('charge.success' == ($event->event ?? '') ) {
-                    $this->setAmount($event->data->amount);
-                    $this->setEmail($event->data->customer->email);
-                    $this->setReference($event->data->reference);
+                    $this->amount = $event->data->amount;
                     $this->setResponse($event);
                     $this->setMessage($event->data->gateway_response);
 

@@ -1,13 +1,13 @@
 <?php
-use ProcessWith\ProcessWith;
+use PayWith\PayWith;
 
 require '../vendor/autoload.php';
 require 'config.php';
 
-$processwith = new ProcessWith('paystack');
-$processwith->setSecretKey( PSTK_SECRET_KEY );
+$paywith = new PayWith('paystack');
+$paywith->setSecretKey( PSTK_SECRET_KEY );
 
-$transaction = $processwith->transaction();
+$transaction = $paywith->transaction();
 $transaction->initialize([
     'amount'        => 1000,
     'email'         => 'ikwuje@gmail.com',
