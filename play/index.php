@@ -18,7 +18,9 @@ $transaction->initialize([
 /* Ravepay
 $transaction->initialize([
     'amount'          => 1000,
-    'customer_email'  => 'afuwapesunday12@gmail.com',
+    'customer'        => [
+        'email' => 'afuwapesunday12@gmail.com',
+    ]
     'redirect_url'    => 'http://localhost:3000/tests/verify.php',
     'meta'            => [ 'consumer_id' => 23, 'consumer_mac' => '92a3-912ba-1192a' ],
 ]);
